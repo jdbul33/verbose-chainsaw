@@ -14,11 +14,7 @@ https://data-southbend.opendata.arcgis.com
 """
 #%%
 import pandas as pd
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-from bokeh.plotting import figure
-# need to import the rest of bokeh here
+
 
 """
 Importing the data files, stored locally on machine but available through GitHub
@@ -34,19 +30,33 @@ article_data = pd.read_csv(file3)
 #%%
 """
 Evaluating basic data tidiness
+
+Data will be imputed if necessary, but preferably dropped if minimal
 """
 
 print(case_data.columns)
 print(case_data.info())
 print(case_data.describe())
+case_data = case_data.dropna(axis = 0)
+#Data dropped here since it only consisted of a small percentage of rows
+print(case_data.info())
 #%%
 print(daily_data.columns)
 print(daily_data.info())
 print(daily_data.describe())
+daily_data_mean = daily_data.mean()
+daily_data = daily_data.fillna(daily_data_mean)
+# Only 1 missing value in each of several columns here, easily imputed
+print(daily_data.info())
 #%%
 print(article_data.columns)
 print(article_data.info())
 print(article_data.describe())
+article_data = article_data.drop(columns = ['Regarding'])
+#This column was categorical and missing over 180K entries
 
-#%%
-"""
+print(article_data.columns)
+print(article_data.head())
+
+
+
