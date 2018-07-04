@@ -11,4 +11,4 @@ Reducing the number of call topics using NLP
 
 """
 
-len(topics.Topic.unique())
+print(len(topics.Topic.unique()))

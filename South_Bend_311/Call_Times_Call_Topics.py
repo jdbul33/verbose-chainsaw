@@ -136,15 +136,58 @@ topics.columns
 
 #%%
 """
-There are many different topics in the dataframe.  They will attempt to be
-grouped based on similarities in language.  This is located in 
-
-text_grouping.py
-
-run this file prior to running the rest of this script
+Initializing function to change string duration of X:XX to seconds numeric
 """
 
 
-#%%
+def string_to_sec(df, col_name):
+    ''' 
+    This function accepts a dataframe and column name (in quotes)
+    It converts the column from XX:XX:XX to seconds and returns in list
+    Pandas must be imported and aliased as pd
+    '''
+    new = []
+    for i in range(len(df[col_name])):
+        x = df.loc[i][col_name]
+        if x.count(":") == 1:
+            ''' For Min:sec '''
+            y, z = x.split(":")
+            y = pd.to_numeric(y)
+            z = pd.to_numeric(z)
+            q = (y * 60) + z
+        elif x.count(":") == 2:
+            ''' For H/Min:Min/sec:Sec/Nothing '''
+            h, y, z = x.split(":")
+            if len(h) == 2:
+                ''' This assumes if the first number is 2 digits, it is min'''
+                h = pd.to_numeric(h)
+                y = pd.to_numeric(y)
+                q = (h * 60) + y
+            elif len(h) == 1:
+                '''Assuming first digit is single, means hours'''
+                h = pd.to_numeric(h)
+                y = pd.to_numeric(y)
+                z = pd.to_numeric(z)
+                q = (h * 3600) + (y * 60) + z
+            else:
+                q = np.NaN
+        else:
+            q = np.NaN
+        new.append(q)
+    return new
 
-topics.grouped = topics.groupby('Topic')['Duration'].mean()
+#%%
+"""
+Add a column called 'Seconds' that represents duration as seconds in numeric form
+"""
+
+topics['Seconds'] = string_to_sec(topics, 'Duration')
+sum(topics['Seconds'] == np.NaN)
+print(topics.Seconds.mean())
+
+#%%
+"""
+Grouping calls by KB owner to take quick mean by topic
+"""
+
+topics_grouped_kb_owner = topics.groupby('KB_Article', as_index=False)['Seconds'].mean()
