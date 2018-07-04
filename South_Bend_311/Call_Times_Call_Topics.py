@@ -57,14 +57,6 @@ plt.show()
 sns.swarmplot(x='Day_of_Week', y='Total_Calls_Handled', data=daily_data)
 plt.show()
 
-#Day 2 of week seems to have highest total number of calls.  Maybe Monday?
-#mean_total_calls = []
-#months = ['Jan', 'Feb', 'Mar', 'Apr', 'June', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
-#for i in months:
-#    x = np.mean(daily_data.Total_Calls_Handled[[daily_data.Month_of_Year[i]]])
-#15    mean_total_calls.append(x)
-
 
 
 daily_num = daily_data
@@ -89,11 +81,70 @@ plt.bar(monthly_call_mean['Month_of_Year'], monthly_call_mean['CallsPresented'],
 plt.title("Average Call Volume by Month over 2013-2015")
 plt.xlabel("Month")
 plt.ylabel('Average Number of Calls Presented')
-#plt.show()
+plt.show()
 #plt.savefig('Monthly_Call_Avg.png')
 
+
+#%%
 """
-Call Volume by Year
+T-test comparing two extreme samples: July and March
+"""
+from scipy import stats
+
+jul = daily_data.loc[daily_data['Month_of_Year'] == 'Jul']
+jul_calls = jul.CallsPresented.values
+
+mar = daily_data.loc[daily_data['Month_of_Year'] == 'Mar']
+mar_calls = mar.CallsPresented.values
+
+print("The null hypothesis states that no statistically significant difference\
+ exists between the number of calls in July and March")
+
+print(np.var(mar_calls))
+print(np.var(jul_calls))
+# These variances are very close, the test is run assuming same and different variances
+# The same result is yielded in both cases
+
+jul_mar_ttest = stats.ttest_ind(jul_calls, mar_calls)
+
+print("The two-sample t-test yields a t statistic of " + str(round(jul_mar_ttest[0], 2)) + ".")
+print("The corresponding p-value is nearly zero.  This disproves the null hypothesis.\
+  In this case, the difference in average call volume between July and March\
+ is significant.")
+
+apr = daily_data.loc[daily_data['Month_of_Year'] == 'Apr']
+apr_calls = apr.CallsPresented.values
+
+print(np.var(apr_calls))
+print(np.var(jul_calls))
+
+apr_jul_ttest = stats.ttest_ind(apr_calls, jul_calls, equal_var=False)
+
+print("The same difference does not hold true for April and July, two high volumes months.")
+
+
+#%%
+"""
+Call resolution by topic
+"""
+# Preprocessing to a concise dataframe
+
+print(article_data.columns)
+topics = article_data.drop(columns=['(Do Not Modify) Phone Call', '(Do Not Modify) Row Checksum', '(Do Not Modify) Modified On', 'Created On'])
+topics.columns = ['Topic', 'Duration', 'KB_Article']
+topics.columns
+
+#%%
+"""
+There are many different topics in the dataframe.  They will attempt to be
+grouped based on similarities in language.  This is located in 
+
+text_grouping.py
+
+run this file prior to running the rest of this script
 """
 
 
+#%%
+
+topics.grouped = topics.groupby('Topic')['Duration'].mean()

@@ -40,6 +40,8 @@ print(case_data.describe())
 case_data = case_data.dropna(axis = 0)
 #Data dropped here since it only consisted of a small percentage of rows
 print(case_data.info())
+
+
 #%%
 print(daily_data.columns)
 print(daily_data.info())
@@ -48,6 +50,8 @@ daily_data_mean = daily_data.mean()
 daily_data = daily_data.fillna(daily_data_mean)
 # Only 1 missing value in each of several columns here, easily imputed
 print(daily_data.info())
+
+
 #%%
 print(article_data.columns)
 print(article_data.info())
