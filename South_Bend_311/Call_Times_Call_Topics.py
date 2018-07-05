@@ -74,10 +74,10 @@ Call volume by Month
 """
 
 
-monthly_call_mean = daily_data.groupby('Month_of_Year', as_index=False)['CallsPresented'].mean()
-print(monthly_call_mean)
+monthly_call_mean = daily_data.groupby('Month_of_Year', as_index=False)['CallsPresented'].mean().reset_index(drop=True)
+monthly_call_mean = monthly_call_mean.sort_values('CallsPresented', ascending=False).reset_index(drop=True)
 
-plt.bar(monthly_call_mean['Month_of_Year'], monthly_call_mean['CallsPresented'], color = 'rgbmrgbmrgbm')
+plt.bar(monthly_call_mean['Month_of_Year'], monthly_call_mean['CallsPresented'], color = sns.color_palette())
 plt.title("Average Call Volume by Month over 2013-2015")
 plt.xlabel("Month")
 plt.ylabel('Average Number of Calls Presented')
@@ -187,7 +187,32 @@ print(topics.Seconds.mean())
 
 #%%
 """
-Grouping calls by KB owner to take quick mean by topic
+Grouping calls by KB owner to take quick mean of duration
 """
 
 topics_grouped_kb_owner = topics.groupby('KB_Article', as_index=False)['Seconds'].mean()
+print(topics_grouped_kb_owner)
+topics_grouped_kb_owner = topics_grouped_kb_owner.sort_values(by=['Seconds'], ascending=False).reset_index(drop=True)
+plt.bar(topics_grouped_kb_owner['KB_Article'][0:5], topics_grouped_kb_owner['Seconds'][0:5], color=sns.color_palette('deep'))
+plt.title("Top Departments by Call Length")
+plt.xticks([0,1,2,3,4], ['Kheran Joseph', 'Code Enforcement', 'Parks', 'Mayor\'s Office', 'Engineering'], rotation=45)
+plt.xlabel("KB Team")
+plt.ylabel("Average Call Duration")
+plt.show()
+#plt.savefig('Call_Dur_by_Dept.png')
+
+
+#%%
+"""
+Identifying Number of calls by department
+"""
+topics_count = topics.groupby('KB_Article', as_index=False)['Topic'].count()
+topics_count = topics_count.sort_values(by=['Topic'], ascending=False).reset_index(drop=True)
+plt.bar(topics_count['KB_Article'][0:5], topics_count['Topic'][0:5], color = sns.color_palette())
+#loc, lab = plt.xticks()
+plt.xticks([0,1,2,3,4],['Solid Waste', 'Water Works', 'Streets', 'Adoxio', 'Lucy McFarlane'], rotation = 45),
+plt.title("Total Call Volume by Department \n 5 Highest")
+plt.xlabel("Department")
+plt.ylabel("Total Call Volume")
+#plt.savefig('Call_Vol_by_Dept.png')
+plt.show()
