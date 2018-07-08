@@ -22,7 +22,7 @@ Transform date-times to date-time class in case dataset
 """
 
 print(case_data.info())
-print(case_data.iloc[:,1].head())
+print(case_data.iloc[:, 1].head())
 time_format = '%Y-%m-%d %H:%M'
 case_data.Entry_Date___Calc = pd.to_datetime(case_data.Entry_Date___Calc,
                                              format = time_format)
@@ -194,7 +194,7 @@ topics_grouped_kb_owner = topics.groupby('KB_Article', as_index=False)['Seconds'
 print(topics_grouped_kb_owner)
 topics_grouped_kb_owner = topics_grouped_kb_owner.sort_values(by=['Seconds'], ascending=False).reset_index(drop=True)
 plt.bar(topics_grouped_kb_owner['KB_Article'][0:5], topics_grouped_kb_owner['Seconds'][0:5], color=sns.color_palette('deep'))
-plt.title("Top Departments by Call Length")
+plt.title("Top Departments by Call Duration")
 plt.xticks([0,1,2,3,4], ['Kheran Joseph', 'Code Enforcement', 'Parks', 'Mayor\'s Office', 'Engineering'], rotation=45)
 plt.xlabel("KB Team")
 plt.ylabel("Average Call Duration")
@@ -216,3 +216,80 @@ plt.xlabel("Department")
 plt.ylabel("Total Call Volume")
 #plt.savefig('Call_Vol_by_Dept.png')
 plt.show()
+
+#%%
+"""
+Exploring the number of calls by topic
+"""
+tt = topics
+tt['Count'] = 1
+tt_count = topics.groupby('Topic', as_index=True)['Count'].count()
+tt_count = tt_count.sort_values(ascending=False)
+print(tt_count.head())
+tt_count = tt_count.to_frame()
+tt_count['Percentage'] = tt_count.Count.apply(lambda x: round(x/np.sum(tt_count['Count'])*100,2))
+
+#%%
+"""
+Finishing dataframe to show average duration and total number of calls by topic
+"""
+temp = topics.groupby('Topic', as_index=True)['Seconds'].mean()
+goal = pd.concat([tt_count, temp], axis=1, join='inner')
+goal.head()
+
+"""
+Pairing each topic with KB team owner for visualization purposes
+"""
+temp = topics.groupby(['Topic', 'KB_Article'], as_index=True)['Seconds'].count()
+temp = temp.to_frame()
+temp = temp.reset_index()
+temp.index = temp['Topic']
+temp = temp.drop(columns=['Topic', 'Seconds'])
+print(temp.info())
+
+# Join to the main goal frame for plotting purposes
+
+final = pd.merge(goal, temp, how='left', left_index=True, right_index=True)
+final.info()
+#final.to_csv('final_groups.csv')
+
+"""
+Had to pull into Excel to remove duplicate rows.
+Need to investigate why pandas is doing this
+"""
+
+topic_data = pd.read_csv('final_groups.csv')
+#%%
+"""
+Create Bokeh visualization
+"""
+from bokeh.plotting import figure
+from bokeh.io import output_file, show
+
+TOOLS = "crosshair, box_select"
+p = figure(tools=TOOLS, x_axis_label=)
+p.circle(topic_data, x="Count", y="Duration", radius=)
+
+
+
+
+
+
+
+# import the HoverTool
+from bokeh.models import HoverTool
+
+# Add circle glyphs to figure p
+p.circle(x, y, size=10,
+         fill_color='grey', alpha=0.1, line_color=None,
+         hover_fill_color='firebrick', hover_alpha=0.5,
+         hover_line_color='white')
+
+# Create a HoverTool: hover
+hover = HoverTool(tooltips=None, mode='vline')
+
+# Add the hover tool to the figure p
+p.add_tools(hover)
+
+
+

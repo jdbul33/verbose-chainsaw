@@ -25,6 +25,7 @@ nltk.download('stopwords')
 """
 
 print(len(topics.Topic.unique()))
+print(len(topics.Topic))
 
 tokenizer = nltk.word_tokenize
 
