@@ -10,10 +10,6 @@ This file is to run after initialization in beginnings.py
 Analyzing resolution times of calls
 by topic and department
 """
-#%%
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
 
 
 #%%
@@ -24,10 +20,8 @@ Transform date-times to date-time class in case dataset
 print(case_data.info())
 print(case_data.iloc[:, 1].head())
 time_format = '%Y-%m-%d %H:%M'
-case_data.Entry_Date___Calc = pd.to_datetime(case_data.Entry_Date___Calc,
-                                             format = time_format)
-case_data.Close_Date___Calc = pd.to_datetime(case_data.Close_Date___Calc,
-                                             format = time_format)
+case_data.Entry_Date___Calc = pd.to_datetime(case_data.Entry_Date___Calc,format = time_format)
+case_data.Close_Date___Calc = pd.to_datetime(case_data.Close_Date___Calc, format = time_format)
 
 #%%
 """
@@ -261,35 +255,33 @@ Need to investigate why pandas is doing this
 topic_data = pd.read_csv('final_groups.csv')
 #%%
 """
-Create Bokeh visualization
+Create Pie Chart Bokeh visualization for calls by dept
 """
 from bokeh.plotting import figure
 from bokeh.io import output_file, show
+from bokeh.transform import cumsum
+from bokeh.palettes import Category20
+from math import pi
 
-TOOLS = "crosshair, box_select"
-p = figure(tools=TOOLS, x_axis_label=)
-p.circle(topic_data, x="Count", y="Duration", radius=)
+df = pd.DataFrame(topics.groupby('KB_Article', as_index=False)['Seconds'].sum())
+df['Percentage'] = round(df['Seconds']/sum(df['Seconds']) *100, 2)
+df = df.sort_values('Seconds', ascending=False)
+others = pd.Series([df.iloc[9:,1].sum(), df.iloc[9:,2].sum()])
+others = pd.Series(['All Other Departments', others[0], others[1]], index=['KB_Article', 'Seconds', 'Percentage'])
+df = df.append(others, ignore_index=True)
+df = df.drop(df.index[9:22])
+assert df.Percentage.sum() > 99.99 and df.Percentage.sum() <= 100.01
+df = df.set_index('KB_Article')
+df['angle'] = df['Seconds']/sum(df['Seconds']) * 2*pi
+df['color'] = Category20[len(df)]
 
+output_file("Call_Time_Spent_Dept.html", title="Time Spent on Calls by Department")
+p = figure(plot_height=350, title="Time Spent on Calls by Department", toolbar_location=None, tools="hover", tooltips="@KB_Article: @Percentage %")
 
+p.wedge(x=0, y=1, radius=0.4, start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'), line_color="white", fill_color='color',source=df)
 
+p.axis.axis_label=None
+p.axis.visible=False
+p.grid.grid_line_color = None
 
-
-
-
-# import the HoverTool
-from bokeh.models import HoverTool
-
-# Add circle glyphs to figure p
-p.circle(x, y, size=10,
-         fill_color='grey', alpha=0.1, line_color=None,
-         hover_fill_color='firebrick', hover_alpha=0.5,
-         hover_line_color='white')
-
-# Create a HoverTool: hover
-hover = HoverTool(tooltips=None, mode='vline')
-
-# Add the hover tool to the figure p
-p.add_tools(hover)
-
-
-
+show(p)
