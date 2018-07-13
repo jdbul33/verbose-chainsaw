@@ -253,35 +253,3 @@ Need to investigate why pandas is doing this
 """
 
 topic_data = pd.read_csv('final_groups.csv')
-#%%
-"""
-Create Pie Chart Bokeh visualization for calls by dept
-"""
-from bokeh.plotting import figure
-from bokeh.io import output_file, show
-from bokeh.transform import cumsum
-from bokeh.palettes import Category20
-from math import pi
-
-df = pd.DataFrame(topics.groupby('KB_Article', as_index=False)['Seconds'].sum())
-df['Percentage'] = round(df['Seconds']/sum(df['Seconds']) *100, 2)
-df = df.sort_values('Seconds', ascending=False)
-others = pd.Series([df.iloc[9:,1].sum(), df.iloc[9:,2].sum()])
-others = pd.Series(['All Other Departments', others[0], others[1]], index=['KB_Article', 'Seconds', 'Percentage'])
-df = df.append(others, ignore_index=True)
-df = df.drop(df.index[9:22])
-assert df.Percentage.sum() > 99.99 and df.Percentage.sum() <= 100.01
-df = df.set_index('KB_Article')
-df['angle'] = df['Seconds']/sum(df['Seconds']) * 2*pi
-df['color'] = Category20[len(df)]
-
-output_file("Call_Time_Spent_Dept.html", title="Time Spent on Calls by Department")
-p = figure(plot_height=350, title="Time Spent on Calls by Department", toolbar_location=None, tools="hover", tooltips="@KB_Article: @Percentage %")
-
-p.wedge(x=0, y=1, radius=0.4, start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'), line_color="white", fill_color='color',source=df)
-
-p.axis.axis_label=None
-p.axis.visible=False
-p.grid.grid_line_color = None
-
-show(p)
