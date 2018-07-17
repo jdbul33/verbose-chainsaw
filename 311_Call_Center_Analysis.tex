@@ -1,4 +1,7 @@
 \documentclass[11pt,twocolumn]{article}
+\usepackage{graphicx}
+%Use includegraphics{}for pics
+\graphicspath{ {./South_Bend_311/} }
 \title{Analysis of 3-1-1 Customer Call Center for South Bend, IN}
 \author{John D. Bulger\\
 \\
@@ -6,11 +9,43 @@ Valparaiso University\\
 }
 \begin{document}
 \maketitle
-\thispagestyle{empty}
 \begin{abstract}
-This is a practice section.  It will test the two column setup
+The city of South Bend, Indiana operates a call center that serves as a primary point of contact for citizens.  The call center handles topics from nearly all of the city's departments.  Open data, maintained by the city, contains several years worth of information.  An analysis of this data was conducted using Python.  The data was 
+analyzed for patterns by time of year, department, and topics in varying methods.  The cleaned, manipulated, and explored data was then developed into an 
+interactive dashboard using the Bokeh library.  In doing so, an interactive HTML file can be distributed to the city that can then be utilized, modified, or connected 
+directly to the data source.
 \end{abstract}
-\section{Introduction \& Background}
-This is just a placeholder until i write something meaningful
+\section{Background}
+The city of South Bend, located in northern Indiana, established a citizen-accessible call center in 2013.  %Make sure this is correct
+The call center handles calls from citizens regarding almost every aspect of city interaction, including waste pick-up and removal, water billing and disconnections, 
+and code enforcement.  By serving as a central hub for communication, the call center is able to consolidate much of the data regarding citizen/consumer issues.  
+Much of this data is available on South Bend's open data portal at https://data-southbend.opendata.arcgis.com.
+\par
+This section will talk about the motivations and plan of attack
+
+\section{Call Data by Month}
+Talk about monthly approach
+\par
+Talk about statistical testing and findings
+
+\section{Calls by Department}
+Brief Intro
+\subsection{Duration of Calls by Department}
+More stuff, talk about resolution
+\subsection{Number of Calls by Department}
+More info, these sections need basic figures from matplotlib input here
+
+\section{Calls by Topic}
+Intro
+\subsection{Patterns by Topic}
+What is busiest, where is time spent dealing with 
+
+\section{Analysis of Possible Patterns}
+Higher calls in summer, much time spent for extra waste pickup, etc
+
+\section{Conclusions}
+
+Goodbye!
+
 
 \end{document}
