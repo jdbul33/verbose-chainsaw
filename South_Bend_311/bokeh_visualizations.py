@@ -14,7 +14,7 @@ from bokeh.plotting import figure, output_file, show
 from bokeh.layouts import gridplot, row, column
 from math import pi
 from bokeh.transform import cumsum
-from bokeh.palettes import Category20, Category10, Inferno, Category20c, brewer
+from bokeh.palettes import Category20, Category10, Inferno, Category20c, brewer, Viridis, Magma
 from bokeh.models import CategoricalColorMapper, Jitter
 #from bokeh.models.widgets import CheckboxGroup, Slider, RangeSlider, Tabs
 #%%
@@ -44,11 +44,12 @@ df = df.set_index('KB_Article')
 df['angle'] = df['Seconds']/sum(df['Seconds']) * 2*pi
 df['color'] = Category20[len(df)]
 
-p = figure(plot_height=400, title="Total Time Spent on Calls by Department \n 9/29/2016 - 06/15/2018", toolbar_location=None, tools="hover", tooltips="@KB_Article: @Percentage{0.0}%")
-p.wedge(x=0, y=1, radius=0.6, start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'), line_color="white", fill_color='color',source=df)
+p = figure(plot_height=400,x_range=(-1.5,3), title="Total Time Spent on Calls by Department \n 9/29/2016 - 06/15/2018", toolbar_location=None, tools="hover", tooltips="@KB_Article: @Percentage{0.0}%")
+p.wedge(x=0, y=1, radius=1.2, start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'), line_color="white", fill_color='color', legend= "KB_Article", source=df)
 p.axis.axis_label=None
 p.axis.visible=False
 p.grid.grid_line_color = None
+
 
 #%%
 """
@@ -150,12 +151,11 @@ quick_topics = list(df_3.iloc[-10:]['Topic'])
 quick_times = list(df_3.iloc[-10:]['Seconds'])
 
 
-color = Category10[len(quick_topics)]
+color = Viridis[len(quick_topics)]
 
-p5 = figure(x_range=quick_topics, y_axis_label='Average Duration in Seconds', plot_height=400,tools="hover", tooltips="Average Call Duration: @top{0.0} seconds", title="Average Call Duration of Top 10 Quickest Topics")
-p5.vbar(x=quick_topics, top=quick_times, width=0.9, fill_color=color)
+p5 = figure(x_range=quick_topics, y_range=(30,45), y_axis_label='Average Duration in Seconds', plot_height=400, title="Average Call Duration of Top 10 Quickest Topics")
+p5.vbar(x=quick_topics, top=quick_times, width=0.6, fill_color=color)
 p5.xaxis.major_label_orientation = pi/3
-
 
 #%%
 """
@@ -166,10 +166,10 @@ long_topics = list(df_3.iloc[0:10]['Topic'])
 long_times = list(df_3.iloc[0:10]['Seconds'])
 
 
-color2 = Inferno[len(long_times)]
+color2 = Magma[len(long_times)]
 
-p4 = figure(x_range=long_topics, y_axis_label='Average Duration in Seconds', plot_height=400,tools="hover", tooltips="Average Call Duration: @top{0.0} seconds", title="Average Call Duration of Top 10 Longest Topics")
-p4.vbar(x=long_topics, top=long_times, width=0.9, fill_color=color2)
+p4 = figure(x_range=long_topics, y_range=(175,230), y_axis_label='Average Duration in Seconds', plot_height=400, title="Average Call Duration of Top 10 Longest Topics")
+p4.vbar(x=long_topics, top=long_times, width=0.6, fill_color=color2)
 p4.xaxis.major_label_orientation = pi/3
 
 
@@ -201,14 +201,16 @@ df_6.reset_index(drop=True, inplace=True)
 
 
 colors = brewer['Set1'][7]
-p6 = figure(title = 'Number of Calls by Topic for Busiest Departments',
-            y_range=(0,600), tools="hover", tooltips="@Topic")
+p6 = figure(title = 'Number of Calls by Topic for Busiest Departments (Excluding Misc. Trash Information)',
+            y_range=(0,6200), tools=["hover", 'box_zoom', 'reset'], tooltips="@Topic; @Count calls")
 
 for i, d in enumerate(list(df_6['Dept'].unique())):
     y = df_6[df_6['Dept'] == d][['Count', 'Topic']]
     color = colors[i  % len(colors)]
-    p6.circle(x={'value': i, 'transform': Jitter(width=0.4)}, y=y['Count'], color=color)
+    p6.circle(x={'value': i, 'transform': Jitter(width=0.4)}, y='Count', source=y, color=color, size=10, alpha=0.75)
 
+sw_trash = df_6[df_6['Topic'] == "Miscellaneous Trash Information"]
+p6.diamond(x={'value': 1, 'transform': Jitter(width=0.4)}, y=5999, source=sw_trash, size=24, fill_color='red', line_color='blue', alpha=1)
 labs = {}
 for i in range(0,7):
     labs[i] = list(df_6['Dept'].unique())[i]
@@ -218,7 +220,6 @@ p6.xaxis.major_label_orientation = pi/3
 p6.xaxis.major_tick_line_color = None
 p6.xaxis.minor_tick_line_color = None
 show(p6)
-# need to add hover tool for topics and figure out scaling issue
 
 #%%
 """
@@ -229,6 +230,7 @@ output_file('311_Call_Center_Dashboard.html', title='311 Call Center Dashboard')
 
 g = row(p, p2)
 h = row(p4, p5)
+j = row(p6)
 
-show(column(g,h))
+show(column(g,h,j))
 output_file('311_Call_Center_Dashboard.html', title='311 Call Center Dashboard')
