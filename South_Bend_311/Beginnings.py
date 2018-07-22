@@ -24,8 +24,8 @@ import matplotlib.pyplot as plt
 Importing the data files, stored locally on machine but available through GitHub
 """
 
-file = "C://users/jdbul/Documents/GitHub/Verbose-Chainsaw/311_Contact_Management_Cases.csv"
-file2 = "C://users/jdbul/Documents/GitHub/Verbose-Chainsaw/311_Call_Center_Activity_by_Day.csv"
+file = "311_Contact_Management_Cases.csv"
+file2 = "311_Call_Center_Activity_by_Day.csv"
 file3 = "C://users/jdbul/Google Drive/Python Independent Study/311 Calls 092916_061518_scrub.csv"
 case_data = pd.read_csv(file)
 daily_data = pd.read_csv(file2)

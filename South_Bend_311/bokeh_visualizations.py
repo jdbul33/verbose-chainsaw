@@ -7,16 +7,12 @@ Created on Thu Jul 12 12:43:26 2018
 
 import pandas as pd
 import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
 from bokeh.plotting import figure, output_file, show
-#from bokeh.io import output_file, show
-from bokeh.layouts import gridplot, row, column
+from bokeh.layouts import row, column
 from math import pi
 from bokeh.transform import cumsum
-from bokeh.palettes import Category20, Category10, Inferno, Category20c, brewer, Viridis, Magma
-from bokeh.models import CategoricalColorMapper, Jitter
-#from bokeh.models.widgets import CheckboxGroup, Slider, RangeSlider, Tabs
+from bokeh.palettes import Category20, brewer, Viridis, Magma, Category10
+from bokeh.models import Jitter
 #%%
 """
 Create Pie Chart Bokeh visualization for total call time by dept
@@ -53,18 +49,23 @@ p.grid.grid_line_color = None
 
 #%%
 """
-Create histogram of call durations by Department
+Create data visualization on a monthly basis
 This will be the new data
+maybe number, abandon, queue or something
 """
 
+mon = list(monthly_call_mean['Month_of_Year'])
+call = list(monthly_call_mean['CallsPresented'])
+cols = brewer['Set3'][12]
 
-df_2 = topics
-dept_to_filter = list(df_2['KB_Article'].unique())
-dept_to_filter.sort()
+p3 = figure(title='Average Daily Call Volume by Month, 2013-2015', x_axis_label='Month',
+            y_axis_label="Mean Daily Number of Calls", x_range=mon, y_range=(0, 740))
 
-for i in range(len(dept_to_filter)):
-    n = dept_to_filter[i]
-    dept_to_filter[i] = n.replace(' - KB Team', '')
+
+p3.vbar(x=mon, top=call, width=0.7, fill_color=cols)
+
+
+
 
 
 
@@ -108,15 +109,15 @@ wed = np.array(new_df.Count[new_df['Day_of_Week'] == 4])
 thu = np.array(new_df.Count[new_df['Day_of_Week'] == 5])
 fri = np.array(new_df.Count[new_df['Day_of_Week'] == 6])
 
+#%%
 
+acc_col = Category10[5]
 
-acc_col = brewer['Dark2'][5]
-
-p2 = figure(x_axis_label = 'Number of Calls per Day', title='Number of Calls by Day of Week 2013 - 2018', background_fill_color = 'ivory')
+p2 = figure(x_axis_label = 'Number of Calls per Day', title='Number of Calls by Day of Week 2013 - 2018; Click Legend to Hide/Show', background_fill_color = 'whitesmoke')
 
 for data, name, color in zip([mon, tue, wed, thu, fri], ['Mon','Tue','Wed','Thu','Fri'], acc_col):
     hist, edges = np.histogram(data, density=True, bins=15)
-    p2.quad(top=hist, bottom=0, left=edges[:-1], right=edges[1:], fill_color=color, line_color="#033649", alpha=0.6, legend=name)
+    p2.quad(top=hist, bottom=0, left=edges[:-1], right=edges[1:], fill_color=color, line_color="#033649", alpha=0.7, legend=name)
 
 #hist, edges = np.histogram(mon, density=True, bins=15)            
 #p2.quad(top=hist, bottom=0, left=edges[:-1], right=edges[1:], fill_color=acc_col[0], line_color="#033649", alpha=0.6, legend='Mon')
@@ -153,7 +154,7 @@ quick_times = list(df_3.iloc[-10:]['Seconds'])
 
 color = Viridis[len(quick_topics)]
 
-p5 = figure(x_range=quick_topics, y_range=(30,45), y_axis_label='Average Duration in Seconds', plot_height=400, title="Average Call Duration of Top 10 Quickest Topics")
+p5 = figure(tools=['ypan','yzoom_out','reset'],x_range=quick_topics, y_range=(30,45), y_axis_label='Average Duration in Seconds', plot_height=400, title="Average Call Duration of Top 10 Quickest Topics; Adjusted Y-Axis")
 p5.vbar(x=quick_topics, top=quick_times, width=0.6, fill_color=color)
 p5.xaxis.major_label_orientation = pi/3
 
@@ -168,7 +169,7 @@ long_times = list(df_3.iloc[0:10]['Seconds'])
 
 color2 = Magma[len(long_times)]
 
-p4 = figure(x_range=long_topics, y_range=(175,230), y_axis_label='Average Duration in Seconds', plot_height=400, title="Average Call Duration of Top 10 Longest Topics")
+p4 = figure(tools=['ypan','yzoom_out','reset'],x_range=long_topics, y_range=(175,230), y_axis_label='Average Duration in Seconds', plot_height=400, title="Average Call Duration of Top 10 Longest Topics; Adjusted Y-Axis")
 p4.vbar(x=long_topics, top=long_times, width=0.6, fill_color=color2)
 p4.xaxis.major_label_orientation = pi/3
 
@@ -201,7 +202,7 @@ df_6.reset_index(drop=True, inplace=True)
 
 
 colors = brewer['Set1'][7]
-p6 = figure(title = 'Number of Calls by Topic for Busiest Departments (Excluding Misc. Trash Information)',
+p6 = figure(title = 'Number of Calls by Topic for Busiest Departments (Misc. Trash Information Not to Scale)',
             y_range=(0,6200), tools=["hover", 'box_zoom', 'reset'], tooltips="@Topic; @Count calls")
 
 for i, d in enumerate(list(df_6['Dept'].unique())):
@@ -219,7 +220,7 @@ p6.xaxis.major_label_overrides = labs
 p6.xaxis.major_label_orientation = pi/3
 p6.xaxis.major_tick_line_color = None
 p6.xaxis.minor_tick_line_color = None
-show(p6)
+
 
 #%%
 """
@@ -230,7 +231,7 @@ output_file('311_Call_Center_Dashboard.html', title='311 Call Center Dashboard')
 
 g = row(p, p2)
 h = row(p4, p5)
-j = row(p6)
+j = row(p6, p3)
 
 show(column(g,h,j))
 output_file('311_Call_Center_Dashboard.html', title='311 Call Center Dashboard')

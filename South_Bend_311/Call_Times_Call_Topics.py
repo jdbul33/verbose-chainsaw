@@ -72,11 +72,11 @@ monthly_call_mean = daily_data.groupby('Month_of_Year', as_index=False)['CallsPr
 monthly_call_mean = monthly_call_mean.sort_values('CallsPresented', ascending=False).reset_index(drop=True)
 
 plt.bar(monthly_call_mean['Month_of_Year'], monthly_call_mean['CallsPresented'], color = sns.color_palette())
-plt.title("Average Call Volume by Month over 2013-2015")
+plt.title("Average Daily Call Volume by Month over 2013-2015")
 plt.xlabel("Month")
 plt.ylabel('Average Number of Calls Presented')
 plt.show()
-#plt.savefig('Monthly_Call_Avg.png')
+plt.savefig('Monthly_Call_Avg.png')
 
 
 #%%
