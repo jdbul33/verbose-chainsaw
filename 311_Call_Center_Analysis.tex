@@ -32,7 +32,7 @@ The second file, referred to as the the case data, contains approximately 480,00
 \par
 The third file, referred to as the topic data, is the new storage method of the current phone system in use by the city, currently containing data from 2016-2018.  It contains much of the same attributes as the case data, but it standardized to reflect the city's use of knowledge base articles.  This ensures topics and departments are standardized across the list, allowing for efficient and accurate analysis.  Since this is the most recent data and is reflective of the city's current systems, this data was heavily relied on in analysis on a department and topic basis.
 
-\section{Loading, Cleaning, & Preprocessing the Data}
+\section{Loading, Cleaning, \& Preprocessing the Data}
 This entire analysis was completed using the Anaconda 5.2 distribution of Python 3.6 (Windows version).  The data was loaded into 3 separate dataframes through the use of pandas libarary.  The data was then inspected for missing data and reasonableness.  Very little data was missing, with the exception of a small percentage of observations in the case data frame (the older data).  These rows were missing a significant proportion of their respective attributes, and thus were dropped completely from the data.  Other data contained small amounts of missing data, which were easily imputed.
 \par
 Upon reading the csv files, pandas initialized most of the attributes as objects.  Preprocessing and transforming was conducted immediately to transform the attributes into more useful types, such as datetime and numeric objects.  Further processing was done throughout the project when necessary in order to provide a useful format.
