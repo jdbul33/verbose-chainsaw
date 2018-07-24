@@ -13,6 +13,7 @@ from math import pi
 from bokeh.transform import cumsum
 from bokeh.palettes import Category20, brewer, Viridis, Magma, Category10
 from bokeh.models import Jitter
+from scipy.stats import sem
 #%%
 """
 Create Pie Chart Bokeh visualization for total call time by dept
@@ -151,11 +152,18 @@ df_3 = df_3.sort_values('Seconds', ascending=False)
 quick_topics = list(df_3.iloc[-10:]['Topic'])
 quick_times = list(df_3.iloc[-10:]['Seconds'])
 
+sem_quick =[]
+for t in range(len(quick_topics)):
+    sem_quick.append(sem(topics[topics['Topic']==quick_topics[t]]['Seconds']))
+
+quick_top = [x+y for x,y in zip(quick_times, sem_quick)]
+quick_bot = [x-y for x,y in zip(quick_times, sem_quick)]
 
 color = Viridis[len(quick_topics)]
 
-p5 = figure(tools=['ypan','yzoom_out','reset'],x_range=quick_topics, y_range=(30,45), y_axis_label='Average Duration in Seconds', plot_height=400, title="Average Call Duration of Top 10 Quickest Topics; Adjusted Y-Axis")
-p5.vbar(x=quick_topics, top=quick_times, width=0.6, fill_color=color)
+p5 = figure(tools=['ypan','yzoom_out','reset'],x_range=quick_topics, y_range=(30,47), y_axis_label='Average Duration in Seconds', plot_height=400, title="Average Call Duration of Top 10 Quickest Topics; Adjusted Y-Axis")
+p5.vbar(x=quick_topics, top=quick_times, width=0.6, fill_color=color, alpha=0.8)
+p5.vbar(x=quick_topics, top=quick_top, bottom=quick_bot, color='black', width=.05)
 p5.xaxis.major_label_orientation = pi/3
 
 #%%
@@ -166,13 +174,19 @@ This is going to be restricted to new topic data
 long_topics = list(df_3.iloc[0:10]['Topic'])
 long_times = list(df_3.iloc[0:10]['Seconds'])
 
+sem_long =[]
+for t in range(len(long_topics)):
+    sem_long.append(sem(topics[topics['Topic']==long_topics[t]]['Seconds']))
+
+long_top = [x+y for x,y in zip(long_times, sem_long)]
+long_bot = [x-y for x,y in zip(long_times, sem_long)]
 
 color2 = Magma[len(long_times)]
 
-p4 = figure(tools=['ypan','yzoom_out','reset'],x_range=long_topics, y_range=(175,230), y_axis_label='Average Duration in Seconds', plot_height=400, title="Average Call Duration of Top 10 Longest Topics; Adjusted Y-Axis")
-p4.vbar(x=long_topics, top=long_times, width=0.6, fill_color=color2)
+p4 = figure(tools=['ypan','yzoom_out','reset'],x_range=long_topics, y_range=(175,245), y_axis_label='Average Duration in Seconds', plot_height=400, title="Average Call Duration of Top 10 Longest Topics; Adjusted Y-Axis")
+p4.vbar(x=long_topics, top=long_times, width=0.6, fill_color=color2, alpha=0.8)
+p4.vbar(x=long_topics, top=long_top, bottom=long_bot, color='black', width=.05)
 p4.xaxis.major_label_orientation = pi/3
-
 
 #%%
 """
