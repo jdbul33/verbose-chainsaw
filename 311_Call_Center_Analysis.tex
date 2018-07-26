@@ -1,8 +1,7 @@
 \documentclass[11pt,twocolumn]{article}
 \usepackage{graphicx}
-%Use includegraphics{}for pics
-\graphicspath{ {./South_Bend_311/} }
-\title{Analysis of 3-1-1 Customer Call Center for South Bend, IN}
+%\graphicspath{ {./South_Bend_311/} }
+\title{Analysis of 311 Customer Call Center for South Bend, IN}
 \author{John D. Bulger\\
 \\
 Valparaiso University\\
@@ -139,6 +138,7 @@ The total number of calls by topic was then determined using the same dataframe 
 
 \section{Creation of Final Dashboard}
 After completion of the above analysis, following guiding questions set forth by the city, the final dashboard was constructed.  The Bokeh package was used to create interactive visualizations, which could conveniently be packaged into a HTML file and sent to the call center management.  In all, the dashboard includes visualizations of:
+
 \begin{itemize}
   \item{Pie chart of total call time by department}
   \item{Histogram of call volume by day of week, overlaid, with legend providing hide/show capabilities}
@@ -148,9 +148,17 @@ After completion of the above analysis, following guiding questions set forth by
   \item{Bar chart of call volume by month}
 \end{itemize}
 
+These charts all utilize various implementation of Bokeh tools, such as HoverTool, BoxZoom, Pan, and checkbox interactivity.  By incorporating these interactions into the dashboard, the result is a more dynamic, engaging product that is simple to interact with for employees outside of the technical fields.
+
 \section{Conclusions}
 
-Goodbye!
+In summary, this analysis and presentation of data trends can be viewed as a successful top-level exploration.  Trends and points emerged from this analysis that will surely be of interest to call center management, while more insights can surely be found while interacting with the visualization dashboard.  For the city, this study should serve to identify areas of business interest within the context of these findings, which could then warrant further exploration with more specific question.  For example, the city may want to see day-of-week trends for a specific topic, or they may seek to see how te number of calls queued relate to the number of calls abandoned.  These more specific questions would necessarily arise from a specific business need, which could be indentified from this study.
+\par
+From an academic standpoint, this analysis allowed for much experience in data manipulation, statistical tests, and data type conversion in Python.  Much of the total time was spent preprocessing the data to achieve homogenous sets that could easily interacted with for analysis.  Additionally, the use of the Bokeh for plot creation granted a opportunity for extensive interaction with this powerful package.
+
+\section{Possible Further Work}
+
+Several paths for further work on this topic exist; however, the exact approach depends on the city's desires.  One approach would be to obtain staffing and scheduling information for the call center and use simulation and optimization techniques to evaluate staffing levels and efficiency.  Another approach would be to develop another dashboard, or perhaps modify the current one, to interact directly with the call center's data source.  This would allow a live, current view of trending topics and departments.  Such a tool could allow call center management to be agile and preemptive regarding emerging trends.
 
 
 \end{document}
