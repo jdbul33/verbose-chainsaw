@@ -183,7 +183,7 @@ long_bot = [x-y for x,y in zip(long_times, sem_long)]
 
 color2 = Magma[len(long_times)]
 
-p4 = figure(tools=['ypan','yzoom_out','reset'],x_range=long_topics, y_range=(175,245), y_axis_label='Average Duration in Seconds', plot_height=400, title="Average Call Duration of Top 10 Longest Topics; Adjusted Y-Axis")
+p4 = figure(tools=['ypan','yzoom_out','reset','save'],x_range=long_topics, y_range=(175,245), y_axis_label='Average Duration in Seconds', plot_height=400, title="Average Call Duration of Top 10 Longest Topics; Adjusted Y-Axis")
 p4.vbar(x=long_topics, top=long_times, width=0.6, fill_color=color2, alpha=0.8)
 p4.vbar(x=long_topics, top=long_top, bottom=long_bot, color='black', width=.05)
 p4.xaxis.major_label_orientation = pi/3
@@ -217,7 +217,7 @@ df_6.reset_index(drop=True, inplace=True)
 
 colors = brewer['Set1'][7]
 p6 = figure(title = 'Number of Calls by Topic for Busiest Departments (Misc. Trash Information Not to Scale)',
-            y_range=(0,6200), tools=["hover", 'box_zoom', 'reset'], tooltips="@Topic; @Count calls")
+            y_range=(0,6200), tools=["hover", 'box_zoom', 'reset', 'save'], tooltips="@Topic; @Count calls")
 
 for i, d in enumerate(list(df_6['Dept'].unique())):
     y = df_6[df_6['Dept'] == d][['Count', 'Topic']]
@@ -239,7 +239,7 @@ p6.xaxis.minor_tick_line_color = None
 #%%
 """
 Create a gridplot layout and a shareable HTML file
-This will effectively be a crude dashboard that will be interactive
+This will effectively be a dashboard that will be interactive
 """
 output_file('311_Call_Center_Dashboard.html', title='311 Call Center Dashboard')
 

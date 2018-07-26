@@ -40,40 +40,87 @@ Upon reading the csv files, pandas initialized most of the attributes as objects
 An analysis of call volume by month was conducted using the daily data, which provides aggregate totals by day for a 2 year period. The relevant data was manipulated by taking the mean of the daily call volume for each day in its respective month.  Upon completion, the data was then plotted in a bar chart format, so as to quickly identify any differences.  This chart can be viewed in Figure 1.
 
 \begin{figure}[h]
-  \includegraphics{BARPLOTHERE.png}
+  \includegraphics[scale=.3]{monthly_bar_plot.png}
   \caption{Plot of average daily call volume by month}
 \end{figure}
-\\
 
 \subsection{Statistical Testing}
-As an exercise in thoroughness, these findings were subjected to a two-sided t-test for statistical significance.  The call volumes of July and March were chosen, as these two months lie at the extremes on the above bar chart.  First, the corresponding records for each month were pulled from the data and stored in two separate lists.  Then, the scipy.stats package was used to conduct the test.  For the purposes of this test, the null hypothesis stated that "the two months have identical expected values."  The test disproved the null hypothesis, with a p-value of nearly zero.  %change
+As an exercise in thoroughness, these findings were subjected to a two-sided t-test for statistical significance.  The call volumes of July and March were chosen, as these two months lie at the extremes on the above bar chart.  First, the corresponding records for each month were pulled from the data and stored in two separate lists.  Then, the scipy.stats package was used to conduct the test.  For the purposes of this test, the null hypothesis stated that "the two months have identical expected values."  The test disproved the null hypothesis, with a p-value of nearly zero.  
+%change
 This supports the observation that the average daily call volume during these two months is indeed statistically significant.
 \par
 The same methodology was then applied to July and April, two of the highest volume months.  In this case, the test was unable to disprove the null hypothesis, showing that the daily volumes in these two months is not statistically different.  In looking at the bar chart, this is again in line with what the casual observer may infer.
-\begin{figure}[h]
-  \includegraphics{SOME VISUAL OF P VALUES HERE.png}
-  \caption{A representation of the p-values from the above tests}
-\end{figure}
-\\
+\begin{center}
+\begin{tabular}{ |c|c| }
+\hline 
+ \textbf{Item} & \textbf{P-Value} \\
+ July v. March & 1.54x10\textsuperscript{-15} \\  
+ Threshold for significance & 0.05 \\ 
+ July v. April & 0.2 \\ 
+ \hline
+\end{tabular}
+\end{center}
 
 \section{Calls by Department}
-One of the primary asks by the city was to determine call trends and statistics on a departmental level.  This was conducted primarily using the topic data, as the data contained accurate and complete information regarding departments.  In addition to being the most recent, this data also utilizes the new department/topic layout that the city has transitioned to.  The data was preprocessed to clean up the department titles prior to plotting for final dashboard by using a string replacement function in Python.  This function can be seen below:
-\\
+One of the primary asks by the city was to determine call trends and statistics on a departmental level.  This was conducted primarily using the topic data, as the data contained accurate and complete information regarding departments.  In addition to being the most recent, this data also utilizes the new department/topic layout that the city has transitioned to.  The data was preprocessed to clean up the department titles prior to plotting for final dashboard by using a simple for loop.  A use of this can be seen below:
+
   \begin{verbatim}
-  Insert func here
+  for i in range(len(dept)):
+    n = dept[i]
+    dept[i] = n.replace(" - KB Team", "")
   \end{verbatim}
-\\
+
 \par
 Additionally, the time format in the data file was read in as a string.  Upon investigating, the data was found to have an inconsistent format.  Duration was in the form "2:34" for two minutes, thirty-four seconds.  However, for longer calls it would be in the form "1:15:56" for one hour, fifteen minutes, and fifty-six seconds.  While beneficial visually, it would not function for any analysis.  This data was converted into seconds, stored as a numeric data type, using the following function:
-\\
+
   \begin{verbatim}
-  Insert func here
+  
+def string_to_sec(df, col_name):
+    ''' 
+    This function accepts a dataframe and 
+    column name (in quotes)
+    It converts the column from XX:XX:XX to
+     seconds and returns in list
+    Pandas must be imported and aliased as pd
+    '''
+    new = []
+    for i in range(len(df[col_name])):
+        x = df.loc[i][col_name]
+        if x.count(":") == 1:
+            ''' For Min:sec '''
+            y, z = x.split(":")
+            y = pd.to_numeric(y)
+            z = pd.to_numeric(z)
+            q = (y * 60) + z
+        elif x.count(":") == 2:
+       '''For H/Min:Min/sec:Sec/Nothing '''
+            h, y, z = x.split(":")
+            if len(h) == 2:
+                ''' This assumes if the
+                   first number is 2 digits,
+                   it is minutes'''
+                h = pd.to_numeric(h)
+                y = pd.to_numeric(y)
+                q = (h * 60) + y
+            elif len(h) == 1:
+         '''Assuming first digit is 
+          single, means hours'''
+          h = pd.to_numeric(h)
+          y = pd.to_numeric(y)
+          z = pd.to_numeric(z)
+          q = (h * 3600) + (y * 60) + z
+       else:
+          q = np.NaN
+     else:
+       q = np.NaN
+    new.append(q)
+   return new
   \end{verbatim}
-\\
+
 \subsection{Analysis}
 Calls by department were then analyzed by average duration.  While this analysis yielded insightful results, which could surely be of use to the call center.  Furthermore, the total number of calls by department was then calculated.  As expected, the department order in each analysis differed.  As a measure of total call volume, the department totals were calculated as the sum of total call time for that department.  All three insights are presented to the city in the final dashboard, but perhaps the total volume visual could be the most useful, especially in matters concerning budgeting.
 \begin{figure}[h]
-  \includegraphics{CALLVOLPYPLOTHERe.png}
+  \includegraphics[scale=0.35]{piechart.png}
   \caption{A visual of the final pie chart of total volume by department}
  \end{figure}
 \\
@@ -82,15 +129,11 @@ Calls by department were then analyzed by average duration.  While this analysis
 Analyzing calls by topic proved to be one of the most challenging and interesting aspects of this analysis.  The same data was used as for the departmental analysis, given the homogenity of topic format.  Among this dataset, 426 unique call topics existed.  The data was then processed to show total call count and average call duration by topics.  This data was then merged with a seperate dataframe, indexed by topic with department as the only attribute.  Once completed, the resulting dataframe contained topic, average call duration, and corresponding department.  At this point, the data was ready for analysis.
 \subsection{Duration}
 Call duration by topics was calculated in the dataframe creation.  However, when sorted so as to see the extremes, several topics with a low volume rose to the top of average duration, some with only one total call.  In a sense, such records can be viewed as outliers, and were thus removed from reporting in the final dashboard.  In the end, only topics with a total volume of more than 50\% of the mean were included in this analysis.  By reducing the topics analyzed, the call center would be able to focus on topics that take a notable duration to resolve, but that also occur frequently enough to warrant attention.  The code, however, can be easily adjusted to a different threshold, if management so desires.
-\begin{figure}[h]
-  \includegraphics{BARPLOT.png}
-  \caption{Durations by topic}
-\end{figure}
 \\
 \subsection{Volume}
-The total number of calls by topic was then determined using the same dataframe as for duration analysis.  While the most frequent call topics were quickly identified, significant overlap with the highest volume departments.  As a result, the volume by topic in and of itself would not serve much use to the city.  This analysis evolved into a by-topic volume analysis within the top several departments identified in Figure 3.  In order to visualize this data in the most effective way, a jitterplot was incorporated into the final dashboard.
+The total number of calls by topic was then determined using the same dataframe as for duration analysis.  While the most frequent call topics were quickly identified, significant overlap with the highest volume departments.  As a result, the volume by topic in and of itself would not serve much use to the city.  This analysis evolved into a by-topic volume analysis within the top several departments identified in Figure 2.  In order to visualize this data in the most effective way, a jitterplot was incorporated into the final dashboard.
 \begin{figure}[h]
-  \includegraphics{jitterplot.png}
+  \includegraphics[scale=0.25]{jitterplot.png}
   \caption{Jitterplot of call volume by topic for the busiest departments.  Hovertool is utilized to show topic}
 \end{figure}
 
