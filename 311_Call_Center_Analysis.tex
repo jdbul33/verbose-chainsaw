@@ -1,6 +1,8 @@
 \documentclass[11pt,twocolumn]{article}
 \usepackage{graphicx}
 %\graphicspath{ {./South_Bend_311/} }
+\usepackage[font={small,it}]{caption}
+\usepackage{fancyvrb}
 \title{Analysis of 311 Customer Call Center for South Bend, IN}
 \author{John D. Bulger
 \\
@@ -34,9 +36,9 @@ The second file, referred to as the the case data, contains approximately 480,00
 The third file, referred to as the topic data, is the new storage method of the current phone system in use by the city, currently containing data from 2016-2018.  It contains much of the same attributes as the case data, but it standardized to reflect the city's use of knowledge base articles.  This ensures topics and departments are standardized across the list, allowing for efficient and accurate analysis.  Since this is the most recent data and is reflective of the city's current systems, this data was heavily relied on in analysis on a department and topic basis.
 
 \section{Loading, Cleaning, \& Preprocessing the Data}
-This entire analysis was completed using the Anaconda 5.2 distribution of Python 3.6 (Windows version).  The data was loaded into 3 separate dataframes through the use of pandas libarary.  The data was then inspected for missing data and reasonableness.  Very little data was missing, with the exception of a small percentage of observations in the case data frame (the older data).  These rows were missing a significant proportion of their respective attributes, and thus were dropped completely from the data.  Other data contained small amounts of missing data, which were easily imputed.
+This entire analysis was completed using the Anaconda 5.2 distribution of Python 3.6 (Windows version).  The data was loaded into 3 separate dataframes through the use of pandas libarary.  The data was then inspected for missing data and reasonableness.  Very little data was missing, with the exception of a small percentage of observations in the case data frame (the older data).  These rows were missing a significant proportion of their respective attributes, and thus were dropped completely from the data.  Other data contained small amounts of missing data, which were easily imputed, primarily by filling with the mean.
 \par
-Upon reading the csv files, pandas initialized most of the attributes as objects.  Preprocessing and transforming was conducted immediately to transform the attributes into more useful types, such as datetime and numeric objects.  Further processing was done throughout the project when necessary in order to provide a useful format.
+Upon reading the CSV files, pandas initialized most of the attributes as objects.  Preprocessing and transforming was conducted immediately to transform the attributes into more useful types, such as datetime and numeric objects.  Further processing was done throughout the project as necessary in order to provide a useful format.
 
 \section{Call Data by Month}
 An analysis of call volume by month was conducted using the daily data, which provides aggregate totals by day for a 2 year period. The relevant data was manipulated by taking the mean of the daily call volume for each day in its respective month.  Upon completion, the data was then plotted in a bar chart format, so as to quickly identify any differences.  This chart can be viewed in Figure 1.
@@ -64,18 +66,18 @@ The same methodology was then applied to July and April, two of the highest volu
 \end{center}
 
 \section{Calls by Department}
-One of the primary asks by the city was to determine call trends and statistics on a departmental level.  This was conducted primarily using the topic data, as the data contained accurate and complete information regarding departments.  In addition to being the most recent, this data also utilizes the new department/topic layout that the city has transitioned to.  The data was preprocessed to clean up the department titles prior to plotting for final dashboard by using a simple for loop.  A use of this can be seen below:
+One of the primary asks by the city was to determine call trends and statistics on a departmental level.  This was conducted primarily using the topic data, as the data contained accurate and complete information regarding departments.  In addition to being the most recent, this data also utilizes the new department/topic layout that the city has transitioned to.  The data was preprocessed to clean up the department titles prior to plotting for final dashboard by using a simple for loop.  A use of this can be seen below:\\
 
-  \begin{verbatim}
+  \begin{Verbatim}[fontsize=\small]
   for i in range(len(dept)):
     n = dept[i]
     dept[i] = n.replace(" - KB Team", "")
-  \end{verbatim}
+  \end{Verbatim}
 
-\par
+
 Additionally, the time format in the data file was read in as a string.  Upon investigating, the data was found to have an inconsistent format.  Duration was in the form "2:34" for two minutes, thirty-four seconds.  However, for longer calls it would be in the form "1:15:56" for one hour, fifteen minutes, and fifty-six seconds.  While beneficial visually, it would not function for any analysis.  This data was converted into seconds, stored as a numeric data type, using the following function:
 
-  \begin{verbatim}
+  \begin{Verbatim}[fontsize=\small]
   
 def string_to_sec(df, col_name):
     ''' 
@@ -99,30 +101,30 @@ def string_to_sec(df, col_name):
             h, y, z = x.split(":")
             if len(h) == 2:
                 ''' This assumes if the
-                   first number is 2 digits,
-                   it is minutes'''
+               first number is 2 digits,
+               it is minutes'''
                 h = pd.to_numeric(h)
                 y = pd.to_numeric(y)
                 q = (h * 60) + y
-            elif len(h) == 1:
+       elif len(h) == 1:
          '''Assuming first digit is 
           single, means hours'''
           h = pd.to_numeric(h)
           y = pd.to_numeric(y)
           z = pd.to_numeric(z)
           q = (h * 3600) + (y * 60) + z
-       else:
+      else:
           q = np.NaN
      else:
        q = np.NaN
     new.append(q)
    return new
-  \end{verbatim}
+  \end{Verbatim}
 
 \subsection{Analysis}
 Calls by department were then analyzed by average duration.  While this analysis yielded insightful results, which could surely be of use to the call center.  Furthermore, the total number of calls by department was then calculated.  As expected, the department order in each analysis differed.  As a measure of total call volume, the department totals were calculated as the sum of total call time for that department.  All three insights are presented to the city in the final dashboard, but perhaps the total volume visual could be the most useful, especially in matters concerning budgeting.
 \begin{figure}[h]
-  \includegraphics[scale=0.35]{piechart.png}
+  \includegraphics[scale=0.4]{piechart.png}
   \caption{A visual of the final pie chart of total volume by department}
  \end{figure}
 \\
@@ -159,7 +161,7 @@ In summary, this analysis and presentation of data trends can be viewed as a suc
 \par
 From an academic standpoint, this analysis allowed for much experience in data manipulation, statistical tests, and data type conversion in Python.  Much of the total time was spent preprocessing the data to achieve homogenous sets that could easily interacted with for analysis.  Additionally, the use of the Bokeh for plot creation granted a opportunity for extensive interaction with this powerful package.
 
-\section{Possible Further Work}
+\section{Opportunites for Further Work}
 
 Several paths for further work on this topic exist; however, the exact approach depends on the city's desires.  One approach would be to obtain staffing and scheduling information for the call center and use simulation and optimization techniques to evaluate staffing levels and efficiency.  Another approach would be to develop another dashboard, or perhaps modify the current one, to interact directly with the call center's data source.  This would allow a live, current view of trending topics and departments.  Such a tool could allow call center management to be agile and preemptive regarding emerging trends.
 
