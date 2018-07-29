@@ -3,7 +3,7 @@
 %\graphicspath{ {./South_Bend_311/} }
 \usepackage[font={small,it}]{caption}
 \usepackage{fancyvrb}
-\title{Analysis of 311 Customer Call Center for South Bend, IN}
+\title{Analysis \& Visualization of Call Center Data using Python}
 \author{John D. Bulger
 \\
 Karl Schmitt, PhD. (Advisor)
@@ -15,10 +15,10 @@ Valparaiso University\\
 \maketitle
 
 \begin{abstract}
-The city of South Bend, Indiana operates a call center that serves as a primary point of contact for citizens.  The call center handles topics from nearly all of the city's departments.  Open data, maintained by the city, contains several years worth of information.  An analysis of this data was conducted using Python 3.6.  The data was 
+\textit{The city of South Bend, Indiana operates a call center that serves as a primary point of contact for citizens.  The call center handles topics for nearly all of the city's departments.  An open data protal, maintained by the city, contains several years worth of information.  An analysis of this data was conducted using Python 3.6.  The data was 
 analyzed for patterns by time of year, department, and topics with varying methods.  The cleaned, manipulated, and explored data was then developed into an 
-interactive dashboard using the Bokeh library.  In doing so, an interactive HTML file can be distributed to the city that can then be utilized, modified, and possibly connected 
-directly to the data source.
+interactive dashboard using the Bokeh library.  In doing so, an interactive HTML file will be distributed to the city, which can then be utilized, modified, and possibly connected 
+directly to the data source}.
 \end{abstract}
 
 \section{Background}
@@ -27,18 +27,18 @@ and code enforcement.  By serving as a central hub for communication, the call c
 Much of this data is available on South Bend's open data portal at https://data-southbend.opendata.arcgis.com.  The guiding questions for this analysis includes seeking patterns and statistics on call volume and duration by timeframe, department, and topics.
 
 \section{Data}
-The data to be analyzed was acquired in three CSV files.  Two of the files are publicly available, and are also posted on the github repository for this project.  The third file was received directly from the city of South Bend, and as a result is not posted publicly at this time.
+The data to be analyzed was acquired in three distinct comma-separated value files.  Two of the files are publicly available, and are also posted on the Github repository for this project.  The third file was received directly from the city of South Bend, and as a result is not posted publicly at this time.
 \par
 The first file, referred to as the daily data, contains a daily summary of the call center data from the years 2013-2015.  It was organized with each record as a data, with each date containing information such as the number of calls presented, average wait time, average number of calls in queue, and number of abandoned calls.
 \par
-The second file, referred to as the the case data, contains approximately 480,000 rows of individual call data from 2013 through 2015.  Calls were logged anonymously with data such as date, duration, topic, and department.  This data format went obsolete when the new call system was implemented.
+The second file, referred to as the the case data, contains approximately 480,000 rows of individual call data from 2013 through 2015.  Calls were logged anonymously with data such as date, duration, topic, and department.  This data format went obsolete when the current call system was implemented.
 \par
-The third file, referred to as the topic data, is the new storage method of the current phone system in use by the city, currently containing data from 2016-2018.  It contains much of the same attributes as the case data, but it standardized to reflect the city's use of knowledge base articles.  This ensures topics and departments are standardized across the list, allowing for efficient and accurate analysis.  Since this is the most recent data and is reflective of the city's current systems, this data was heavily relied on in analysis on a department and topic basis.
+The third file, referred to as the topic data, is the storage method of the current phone system in use by the city, containing data from 2016-2018.  It contains much of the same attributes as the case data, but it standardized to reflect the city's use of knowledge base articles.  This ensures topics and departments are standardized across the list, allowing for efficient and accurate analysis.  Since this is the most recent data and is reflective of the city's current systems, this data was heavily relied upon for analysis on a department and topic basis.
 
 \section{Loading, Cleaning, \& Preprocessing the Data}
-This entire analysis was completed using the Anaconda 5.2 distribution of Python 3.6 (Windows version).  The data was loaded into 3 separate dataframes through the use of pandas libarary.  The data was then inspected for missing data and reasonableness.  Very little data was missing, with the exception of a small percentage of observations in the case data frame (the older data).  These rows were missing a significant proportion of their respective attributes, and thus were dropped completely from the data.  Other data contained small amounts of missing data, which were easily imputed, primarily by filling with the mean.
+This entire analysis was completed using the Anaconda 5.2 distribution of Python 3.6 (Windows 64-bit).  The data was loaded into 3 separate dataframes through the use of Pandas.  The data was then inspected for missing data and reasonableness.  Very little data was missing, with the exception of a small percentage of observations in the case data frame (the older data).  These rows were missing a significant proportion of their respective attributes, and thus were dropped completely from the data.  Other data contained small amounts of missing data, which were easily imputed, primarily by filling with the mean.
 \par
-Upon reading the CSV files, pandas initialized most of the attributes as objects.  Preprocessing and transforming was conducted immediately to transform the attributes into more useful types, such as datetime and numeric objects.  Further processing was done throughout the project as necessary in order to provide a useful format.
+Upon reading the CSV files using the Pandas, Python initialized most of the attributes as objects.  Preprocessing and transforming was conducted immediately to transform the attributes into more useful types, such as datetime and numeric objects.  Further processing was done throughout the project as necessary in order to provide a useful format.
 
 \section{Call Data by Month}
 An analysis of call volume by month was conducted using the daily data, which provides aggregate totals by day for a 2 year period. The relevant data was manipulated by taking the mean of the daily call volume for each day in its respective month.  Upon completion, the data was then plotted in a bar chart format, so as to quickly identify any differences.  This chart can be viewed in Figure 1.
@@ -50,16 +50,15 @@ An analysis of call volume by month was conducted using the daily data, which pr
 
 \subsection{Statistical Testing}
 As an exercise in thoroughness, these findings were subjected to a two-sided t-test for statistical significance.  The call volumes of July and March were chosen, as these two months lie at the extremes on the above bar chart.  First, the corresponding records for each month were pulled from the data and stored in two separate lists.  Then, the scipy.stats package was used to conduct the test.  For the purposes of this test, the null hypothesis stated that "the two months have identical expected values."  The test disproved the null hypothesis, with a p-value of nearly zero.  
-%change
 This supports the observation that the average daily call volume during these two months is indeed statistically significant.
 \par
-The same methodology was then applied to July and April, two of the highest volume months.  In this case, the test was unable to disprove the null hypothesis, showing that the daily volumes in these two months is not statistically different.  In looking at the bar chart, this is again in line with what the casual observer may infer.
+The same methodology was then applied to July and April, two of the highest volume months.  In this case, the test was unable to disprove the null hypothesis, showing that the daily volumes in these two months are not statistically different.  In looking at the bar chart, this is again in line with what the casual observer may infer.
 \begin{center}
 \begin{tabular}{ |c|c| }
 \hline 
  \textbf{Item} & \textbf{P-Value} \\
- July v. March & 1.54x10\textsuperscript{-15} \\  
- Threshold for significance & 0.05 \\ 
+ \textbf{Threshold for significance} & \textbf{0.05} \\
+ July v. March & 1.54x10\textsuperscript{-15} \\ 
  July v. April & 0.2 \\ 
  \hline
 \end{tabular}
@@ -75,7 +74,7 @@ One of the primary asks by the city was to determine call trends and statistics 
   \end{Verbatim}
 
 
-Additionally, the time format in the data file was read in as a string.  Upon investigating, the data was found to have an inconsistent format.  Duration was in the form "2:34" for two minutes, thirty-four seconds.  However, for longer calls it would be in the form "1:15:56" for one hour, fifteen minutes, and fifty-six seconds.  While beneficial visually, it would not function for any analysis.  This data was converted into seconds, stored as a numeric data type, using the following function:
+Additionally, the time format in the data file was read in as a string.  Upon investigating, the data was found to have an inconsistent format.  Duration was in the form ``2:34" for two minutes, thirty-four seconds.  However, for longer calls it would be in the form ``1:15:56" for one hour, fifteen minutes, and fifty-six seconds.  While beneficial visually, it would not function for any analysis.  This data was converted into seconds, stored as a numeric data type, using the following function:
 
   \begin{Verbatim}[fontsize=\small]
   
@@ -122,7 +121,7 @@ def string_to_sec(df, col_name):
   \end{Verbatim}
 
 \subsection{Analysis}
-Calls by department were then analyzed by average duration.  While this analysis yielded insightful results, which could surely be of use to the call center.  Furthermore, the total number of calls by department was then calculated.  As expected, the department order in each analysis differed.  As a measure of total call volume, the department totals were calculated as the sum of total call time for that department.  All three insights are presented to the city in the final dashboard, but perhaps the total volume visual could be the most useful, especially in matters concerning budgeting.
+Calls by department were then analyzed by average duration and total number.  As expected, the department order in each analysis differed.  As a different approach to the measure of total call volume, the department totals were calculated as the sum of total call time for that department.  All three insights are presented to the city in the final dashboard, but perhaps the total volume visual could be the most useful, especially in matters concerning budgeting.  This visualization can be seen in the pie chart in Figure 2.
 \begin{figure}[h]
   \includegraphics[scale=0.4]{piechart.png}
   \caption{A visual of the final pie chart of total volume by department}
@@ -131,9 +130,10 @@ Calls by department were then analyzed by average duration.  While this analysis
  
 \section{Calls by Topic}
 Analyzing calls by topic proved to be one of the most challenging and interesting aspects of this analysis.  The same data was used as for the departmental analysis, given the homogenity of topic format.  Among this dataset, 426 unique call topics existed.  The data was then processed to show total call count and average call duration by topics.  This data was then merged with a seperate dataframe, indexed by topic with department as the only attribute.  Once completed, the resulting dataframe contained topic, average call duration, and corresponding department.  At this point, the data was ready for analysis.
+
 \subsection{Duration}
-Call duration by topics was calculated in the dataframe creation.  However, when sorted so as to see the extremes, several topics with a low volume rose to the top of average duration, some with only one total call.  In a sense, such records can be viewed as outliers, and were thus removed from reporting in the final dashboard.  In the end, only topics with a total volume of more than 50\% of the mean were included in this analysis.  By reducing the topics analyzed, the call center would be able to focus on topics that take a notable duration to resolve, but that also occur frequently enough to warrant attention.  The code, however, can be easily adjusted to a different threshold, if management so desires.
-\\
+Call duration by topics was calculated in the dataframe creation.  However, when sorted so as to see the extremes, several topics with a low volume rose to the top of average duration, some with only one total call.  In a sense, such records can be viewed as outliers, and were thus removed from reporting in the final dashboard.  In the end, only topics with a total volume above the first quartile (of total calls) were included in this analysis.  By reducing the topics analyzed, the call center would be able to focus on topics that take a notable duration to resolve, but that also occur frequently enough to warrant attention.  The code, however, can be easily adjusted to a different threshold, if management so desires.
+
 \subsection{Volume}
 The total number of calls by topic was then determined using the same dataframe as for duration analysis.  While the most frequent call topics were quickly identified, significant overlap with the highest volume departments.  As a result, the volume by topic in and of itself would not serve much use to the city.  This analysis evolved into a by-topic volume analysis within the top several departments identified in Figure 2.  In order to visualize this data in the most effective way, a jitterplot was incorporated into the final dashboard.
 \begin{figure}[h]
@@ -157,9 +157,9 @@ These charts all utilize various implementation of Bokeh tools, such as HoverToo
 
 \section{Conclusions}
 
-In summary, this analysis and presentation of data trends can be viewed as a successful top-level exploration.  Trends and points emerged from this analysis that will surely be of interest to call center management, while more insights can surely be found while interacting with the visualization dashboard.  For the city, this study should serve to identify areas of business interest within the context of these findings, which could then warrant further exploration with more specific question.  For example, the city may want to see day-of-week trends for a specific topic, or they may seek to see how te number of calls queued relate to the number of calls abandoned.  These more specific questions would necessarily arise from a specific business need, which could be indentified from this study.
+In summary, this analysis and presentation of data trends can be viewed as a successful top-level exploration.  Trends and points emerged from this analysis that will surely be of interest to call center management, while more insights can surely be found while interacting with the visualization dashboard.  For the city, this study should serve to identify areas of business interest within the context of these findings, which could then warrant further exploration with more specific questions.  For example, the city may want to see day-of-week trends for a specific topic, or they may seek to see how te number of calls queued relate to the number of calls abandoned.  These more specific questions would necessarily arise from a specific business need, which could perhaps be identified from this study.
 \par
-From an academic standpoint, this analysis allowed for much experience in data manipulation, statistical tests, and data type conversion in Python.  Much of the total time was spent preprocessing the data to achieve homogenous sets that could easily interacted with for analysis.  Additionally, the use of the Bokeh for plot creation granted a opportunity for extensive interaction with this powerful package.
+From an academic standpoint, this analysis allowed for signifcant experience in data manipulation, statistical tests, and data type conversion in Python.  Much of the total time was spent preprocessing the data to achieve homogenous sets that could easily interacted with for analysis.  Additionally, the use of the Bokeh for plot creation granted a opportunity for extensive interaction with this powerful package.
 
 \section{Opportunites for Further Work}
 
