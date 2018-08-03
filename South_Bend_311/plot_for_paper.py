@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jul 12 12:43:26 2018
+Created on Thu Aug  2 18:58:39 2018
 
 @author: jdbul
+"""
+"""
+Plots for paper, separate from dashboard plots
 """
 
 import pandas as pd
@@ -14,6 +17,7 @@ from bokeh.transform import cumsum
 from bokeh.palettes import Category20, brewer, Viridis, Magma, Category10
 from bokeh.models import Jitter
 from scipy.stats import sem
+
 #%%
 """
 Create Pie Chart Bokeh visualization for total call time by dept
@@ -54,7 +58,6 @@ Create data visualization on a monthly basis
 This will be the new data
 maybe number, abandon, queue or something
 """
- 
 
 mon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 call = []
@@ -64,7 +67,7 @@ for j in range(len(mon)):
 
 cols = brewer['Set3'][12]
 
-p3 = figure(title='Average Daily Call Volume by Month, 2013-2015', x_axis_label='Month',
+p3 = figure(x_axis_label='Month',
             y_axis_label="Mean Daily Number of Calls", x_range=mon, y_range=(0, 740))
 
 
@@ -79,6 +82,10 @@ mon_top = [x+y for x,y in zip(call, sem_month)]
 mon_bot = [x-y for x,y in zip(call, sem_month)]
 
 p3.vbar(x=mon, top=mon_top, bottom=mon_bot, color='black', width=.05)
+p3.xaxis.major_label_text_font_size = "12pt"
+p3.yaxis.major_label_text_font_size = "12pt"
+show(p3)
+
 
 
 
@@ -247,16 +254,4 @@ p6.xaxis.major_tick_line_color = None
 p6.xaxis.minor_tick_line_color = None
 
 
-#%%
-"""
-Create a gridplot layout and a shareable HTML file
-This will effectively be a dashboard that will be interactive
-"""
-
-
-g = row(p, p2)
-h = row(p4, p5)
-j = row(p6, p3)
-output_file('311_Call_Center_Dashboard.html', title='311 Call Center Dashboard')
-show(column(g,h,j))
 

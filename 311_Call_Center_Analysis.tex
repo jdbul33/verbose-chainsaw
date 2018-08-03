@@ -15,16 +15,16 @@ Valparaiso University\\
 \maketitle
 
 \begin{abstract}
-\textit{The city of South Bend, Indiana operates a call center that serves as a primary point of contact for citizens.  The call center handles topics for nearly all of the city's departments.  An open data protal, maintained by the city, contains several years worth of information.  An analysis of this data was conducted using Python 3.6.  The data was 
+\textit{The city of South Bend, Indiana operates a call center that serves as a primary point of contact for citizens.  The call center handles topics for nearly all of the city's departments.  An open data portal, maintained by the city, contains several years worth of information.  An analysis of this data was conducted using Python 3.6.  The data was 
 analyzed for patterns by time of year, department, and topics with varying methods.  The cleaned, manipulated, and explored data was then developed into an 
 interactive dashboard using the Bokeh library.  In doing so, an interactive HTML file will be distributed to the city, which can then be utilized, modified, and possibly connected 
 directly to the data source}.
 \end{abstract}
 
-\section{Background}
+\section{Introduction}
 The city of South Bend, located in northern Indiana, established a citizen-accessible call center in February 2013.  The call center handles calls from citizens regarding almost every aspect of city interaction, including waste pick-up and removal, water billing and disconnections, 
 and code enforcement.  By serving as a central hub for communication, the call center is able to consolidate much of the data regarding citizen/consumer issues.  
-Much of this data is available on South Bend's open data portal at https://data-southbend.opendata.arcgis.com.  The guiding questions for this analysis includes seeking patterns and statistics on call volume and duration by timeframe, department, and topics.
+Much of this data is available on South Bend's open data portal at https://data-southbend.opendata.arcgis.com.  The guiding questions for this analysis includes seeking patterns and statistics on call volume and duration by timeframe, department, and topics.  The city has used several services/formats for data collection, resulting in data sets from differing time periods having different attributes and formats.  For much of the in-depth topic analysis, the most current format will be used.
 
 \section{Data}
 The data to be analyzed was acquired in three distinct comma-separated value files.  Two of the files are publicly available, and are also posted on the Github repository for this project.  The third file was received directly from the city of South Bend, and as a result is not posted publicly at this time.
@@ -33,7 +33,7 @@ The first file, referred to as the daily data, contains a daily summary of the c
 \par
 The second file, referred to as the the case data, contains approximately 480,000 rows of individual call data from 2013 through 2015.  Calls were logged anonymously with data such as date, duration, topic, and department.  This data format went obsolete when the current call system was implemented.
 \par
-The third file, referred to as the topic data, is the storage method of the current phone system in use by the city, containing data from 2016-2018.  It contains much of the same attributes as the case data, but it standardized to reflect the city's use of knowledge base articles.  This ensures topics and departments are standardized across the list, allowing for efficient and accurate analysis.  Since this is the most recent data and is reflective of the city's current systems, this data was heavily relied upon for analysis on a department and topic basis.
+The third file, referred to as the topic data, is the storage method of the current phone system in use by the city.  This file contains data from 2016-2018.  It contains much of the same attributes as the case data, but it standardized to reflect the city's use of knowledge base articles.  These articles correspond to possible questions or issues raised by callers; as a result, the call center employees have a reference to answer questions.  Additionally, this standardizes the format for recording issues for each call, since each topic has a standardized name.  This ensures topics and departments match across the list, allowing for efficient and accurate analysis.  Since this is the most recent data and is reflective of the city's current systems, this data was heavily relied upon for analysis on a department and topic basis.
 
 \section{Loading, Cleaning, \& Preprocessing the Data}
 This entire analysis was completed using the Anaconda 5.2 distribution of Python 3.6 (Windows 64-bit).  The data was loaded into 3 separate dataframes through the use of Pandas.  The data was then inspected for missing data and reasonableness.  Very little data was missing, with the exception of a small percentage of observations in the case data frame (the older data).  These rows were missing a significant proportion of their respective attributes, and thus were dropped completely from the data.  Other data contained small amounts of missing data, which were easily imputed, primarily by filling with the mean.
@@ -44,12 +44,12 @@ Upon reading the CSV files using the Pandas, Python initialized most of the attr
 An analysis of call volume by month was conducted using the daily data, which provides aggregate totals by day for a 2 year period. The relevant data was manipulated by taking the mean of the daily call volume for each day in its respective month.  Upon completion, the data was then plotted in a bar chart format, so as to quickly identify any differences.  This chart can be viewed in Figure 1.
 
 \begin{figure}[h]
-  \includegraphics[scale=.3]{monthly_bar_plot.png}
+  \includegraphics[scale=.3]{month_bar.png}
   \caption{Plot of average daily call volume by month}
 \end{figure}
 
 \subsection{Statistical Testing}
-As an exercise in thoroughness, these findings were subjected to a two-sided t-test for statistical significance.  The call volumes of July and March were chosen, as these two months lie at the extremes on the above bar chart.  First, the corresponding records for each month were pulled from the data and stored in two separate lists.  Then, the scipy.stats package was used to conduct the test.  For the purposes of this test, the null hypothesis stated that "the two months have identical expected values."  The test disproved the null hypothesis, with a p-value of nearly zero.  
+As an exercise in thoroughness, these findings were subjected to a two-sided t-test for statistical significance.  The call volumes of July and March were chosen, as these two months lie at the extremes on the above bar chart.  First, the corresponding records for each month were pulled from the data and stored in two separate lists.  Then, the scipy.stats package was used to conduct the test.  For the purposes of this test, the null hypothesis stated that ``the two months have identical expected values."  The test disproved the null hypothesis, with a p-value of nearly zero.  
 This supports the observation that the average daily call volume during these two months is indeed statistically significant.
 \par
 The same methodology was then applied to July and April, two of the highest volume months.  In this case, the test was unable to disprove the null hypothesis, showing that the daily volumes in these two months are not statistically different.  In looking at the bar chart, this is again in line with what the casual observer may infer.
@@ -65,7 +65,7 @@ The same methodology was then applied to July and April, two of the highest volu
 \end{center}
 
 \section{Calls by Department}
-One of the primary asks by the city was to determine call trends and statistics on a departmental level.  This was conducted primarily using the topic data, as the data contained accurate and complete information regarding departments.  In addition to being the most recent, this data also utilizes the new department/topic layout that the city has transitioned to.  The data was preprocessed to clean up the department titles prior to plotting for final dashboard by using a simple for loop.  A use of this can be seen below:\\
+One of the primary tasks posed by the city was to explore call trends on a departmental level.  This was conducted primarily using the topic data, as the data contained accurate and complete information regarding departments.  In addition to being the most recent, this data also utilizes the new department/topic layout that the city has transitioned to.  In the original data format, the department titles were often followed by the characters ``- KB Team".  Since leaving this suffix appended to each title would only visually detract from the dashboard, the string was removed.  This process can be seen below:\\
 
   \begin{Verbatim}[fontsize=\small]
   for i in range(len(dept)):
@@ -83,7 +83,7 @@ def string_to_sec(df, col_name):
     This function accepts a dataframe and 
     column name (in quotes)
     It converts the column from XX:XX:XX to
-     seconds and returns in list
+     seconds and returns a list.
     Pandas must be imported and aliased as pd
     '''
     new = []
@@ -119,6 +119,8 @@ def string_to_sec(df, col_name):
     new.append(q)
    return new
   \end{Verbatim}
+
+This function returns a list, which is then evaluated for reasonableness and appended to the dataframe.
 
 \subsection{Analysis}
 Calls by department were then analyzed by average duration and total number.  As expected, the department order in each analysis differed.  As a different approach to the measure of total call volume, the department totals were calculated as the sum of total call time for that department.  All three insights are presented to the city in the final dashboard, but perhaps the total volume visual could be the most useful, especially in matters concerning budgeting.  This visualization can be seen in the pie chart in Figure 2.
