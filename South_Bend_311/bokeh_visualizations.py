@@ -12,7 +12,7 @@ from bokeh.layouts import row, column
 from math import pi
 from bokeh.transform import cumsum
 from bokeh.palettes import Category20, brewer, Viridis, Magma, Category10
-from bokeh.models import Jitter
+from bokeh.models import Jitter, Whisker, ColumnDataSource
 from scipy.stats import sem
 #%%
 """
@@ -78,7 +78,14 @@ for i in range(len(mon)):
 mon_top = [x+y for x,y in zip(call, sem_month)]
 mon_bot = [x-y for x,y in zip(call, sem_month)]
 
-p3.vbar(x=mon, top=mon_top, bottom=mon_bot, color='black', width=.05)
+
+source_error = ColumnDataSource(data=dict(base=mon, lower=mon_bot, upper=mon_top))
+
+
+p3.add_layout(Whisker(source=source_error, base='base', upper='upper', lower='lower', level='overlay'))
+
+p3.xaxis.major_label_text_font_size = "11pt"
+p3.yaxis.major_label_text_font_size = "11pt"
 
 
 
@@ -148,7 +155,8 @@ for data, name, color in zip([mon, tue, wed, thu, fri], ['Mon','Tue','Wed','Thu'
 
 p2.legend.location = "top_left"
 p2.legend.click_policy="hide"
-
+p2.xaxis.major_label_text_font_size = "11pt"
+p2.yaxis.major_label_text_font_size = "11pt"
 
 #%%
 """
@@ -170,11 +178,15 @@ for t in range(len(quick_topics)):
 quick_top = [x+y for x,y in zip(quick_times, sem_quick)]
 quick_bot = [x-y for x,y in zip(quick_times, sem_quick)]
 
+source_error1 = ColumnDataSource(data=dict(base=quick_topics, lower=quick_bot, upper=quick_top))
+
 color = Viridis[len(quick_topics)]
 
 p5 = figure(tools=['ypan','yzoom_out','reset'],x_range=quick_topics, y_range=(30,47), y_axis_label='Average Duration in Seconds', plot_height=400, title="Average Call Duration of Top 10 Quickest Topics; Adjusted Y-Axis")
 p5.vbar(x=quick_topics, top=quick_times, width=0.6, fill_color=color, alpha=0.8)
-p5.vbar(x=quick_topics, top=quick_top, bottom=quick_bot, color='black', width=.05)
+p5.add_layout(Whisker(source=source_error1, base='base', upper='upper', lower='lower', level='overlay'))
+
+
 p5.xaxis.major_label_orientation = pi/3
 
 #%%
@@ -192,11 +204,14 @@ for t in range(len(long_topics)):
 long_top = [x+y for x,y in zip(long_times, sem_long)]
 long_bot = [x-y for x,y in zip(long_times, sem_long)]
 
+
+source_error2 = ColumnDataSource(data=dict(base=long_topics, lower=long_bot, upper=long_top))
+
 color2 = Magma[len(long_times)]
 
 p4 = figure(tools=['ypan','yzoom_out','reset','save'],x_range=long_topics, y_range=(175,245), y_axis_label='Average Duration in Seconds', plot_height=400, title="Average Call Duration of Top 10 Longest Topics; Adjusted Y-Axis")
 p4.vbar(x=long_topics, top=long_times, width=0.6, fill_color=color2, alpha=0.8)
-p4.vbar(x=long_topics, top=long_top, bottom=long_bot, color='black', width=.05)
+p4.add_layout(Whisker(source=source_error2, base='base', upper='upper', lower='lower', level='overlay'))
 p4.xaxis.major_label_orientation = pi/3
 
 #%%
@@ -245,7 +260,8 @@ p6.xaxis.major_label_overrides = labs
 p6.xaxis.major_label_orientation = pi/3
 p6.xaxis.major_tick_line_color = None
 p6.xaxis.minor_tick_line_color = None
-
+p6.xaxis.major_label_text_font_size = "11pt"
+p6.yaxis.major_label_text_font_size = "11pt"
 
 #%%
 """

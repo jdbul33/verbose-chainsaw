@@ -15,7 +15,7 @@ from bokeh.layouts import row, column
 from math import pi
 from bokeh.transform import cumsum
 from bokeh.palettes import Category20, brewer, Viridis, Magma, Category10
-from bokeh.models import Jitter
+from bokeh.models import Jitter, Whisker, ColumnDataSource, Label
 from scipy.stats import sem
 
 #%%
@@ -45,12 +45,23 @@ df = df.set_index('KB_Article')
 df['angle'] = df['Seconds']/sum(df['Seconds']) * 2*pi
 df['color'] = Category20[len(df)]
 
-p = figure(plot_height=400,x_range=(-1.5,3), title="Total Time Spent on Calls by Department \n 9/29/2016 - 06/15/2018", toolbar_location=None, tools="hover", tooltips="@KB_Article: @Percentage{0.0}%")
-p.wedge(x=0, y=1, radius=1.2, start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'), line_color="white", fill_color='color', legend= "KB_Article", source=df)
+p = figure(plot_height=400,x_range=(-1.5,3), toolbar_location='right', tools=["hover","save"], tooltips="@KB_Article: @Percentage{0.0}%")
+p.wedge(x=0, y=1, radius=1.2, name='Percentage', start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'), line_color="white", fill_color='color', legend= "KB_Article", source=df)
 p.axis.axis_label=None
 p.axis.visible=False
 p.grid.grid_line_color = None
-
+p.legend.label_text_font_size = "12pt"
+p.add_layout(Label(x=0, y=1.4, text='38.1%'))
+p.add_layout(Label(x=-.9, y=.9, text='31.7%'))
+p.add_layout(Label(x=-.15, y=.4, text='10.1%'))
+p.add_layout(Label(x=.75, y=.86, text='5.3%'))
+p.add_layout(Label(x=.4, y=.19, text='3.4%'))
+p.add_layout(Label(x=.7, y=.27, text='3.0%'))
+p.add_layout(Label(x=.87, y=.4, text='2.2%'))
+p.add_layout(Label(x=.97, y=.48, text='2.2%'))
+p.add_layout(Label(x=1.02, y=.565, text='2.1%'))
+p.add_layout(Label(x=1, y=.67, text='1.9%'))
+show(p)
 
 #%%
 """
@@ -81,7 +92,11 @@ for i in range(len(mon)):
 mon_top = [x+y for x,y in zip(call, sem_month)]
 mon_bot = [x-y for x,y in zip(call, sem_month)]
 
-p3.vbar(x=mon, top=mon_top, bottom=mon_bot, color='black', width=.05)
+source_error = ColumnDataSource(data=dict(base=mon, lower=mon_bot, upper=mon_top))
+
+
+p3.add_layout(Whisker(source=source_error, base='base', upper='upper', lower='lower', level='overlay'))
+#p3.vbar(x=mon, top=mon_top, bottom=mon_bot, color='black', width=.05)
 p3.xaxis.major_label_text_font_size = "12pt"
 p3.yaxis.major_label_text_font_size = "12pt"
 show(p3)
@@ -234,8 +249,7 @@ df_6.reset_index(drop=True, inplace=True)
 
 
 colors = brewer['Set1'][7]
-p6 = figure(title = 'Number of Calls by Topic for Busiest Departments (Misc. Trash Information Not to Scale)',
-            y_range=(0,6200), tools=["hover", 'box_zoom', 'reset', 'save'], tooltips="@Topic; @Count calls")
+p6 = figure(y_range=(0,6200), tools=["hover", 'box_zoom', 'reset', 'save'], tooltips="@Topic; @Count calls")
 
 for i, d in enumerate(list(df_6['Dept'].unique())):
     y = df_6[df_6['Dept'] == d][['Count', 'Topic']]
@@ -252,6 +266,8 @@ p6.xaxis.major_label_overrides = labs
 p6.xaxis.major_label_orientation = pi/3
 p6.xaxis.major_tick_line_color = None
 p6.xaxis.minor_tick_line_color = None
-
+p6.xaxis.major_label_text_font_size = "12pt"
+p6.yaxis.major_label_text_font_size = "12pt"
+show(p6)
 
 

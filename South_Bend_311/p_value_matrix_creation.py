@@ -8,6 +8,8 @@ Created on Thu Aug  2 22:19:19 2018
 import pandas as pd
 import numpy as np
 from scipy import stats
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
@@ -22,10 +24,15 @@ p_df = pd.DataFrame(index=month, columns=month)
 
 for i in range(len(month)):
     for j in range(len(month)):
-        
-    
+        res = stats.ttest_ind(monthly_calls[month[i]], monthly_calls[month[j]])
+        p_df.iloc[i,j] = res[1]
+
+p_df = p_df.apply(pd.to_numeric)
+
+sns.heatmap(p_df, vmax=0.055, vmin=.045, cmap='RdYlGn')
 
 
-
-jul_mar_ttest = stats.ttest_ind(jul_calls, mar_calls)
-
+d = p_df.where(np.triu(np.ones(p_df.shape)).astype(np.bool))
+fig = sns.heatmap(d, center = .05, cmap='coolwarm')
+plot = fig.get_figure()
+plot.savefig('Heatmap.png')
