@@ -29,10 +29,7 @@ for i in range(len(month)):
 
 p_df = p_df.apply(pd.to_numeric)
 
-sns.heatmap(p_df, vmax=0.055, vmin=.045, cmap='RdYlGn')
-
-
-d = p_df.where(np.triu(np.ones(p_df.shape)).astype(np.bool))
+d = p_df.where(np.tril(np.ones(p_df.shape)).astype(np.bool))
 fig = sns.heatmap(d, center = .05, cmap='coolwarm')
 plot = fig.get_figure()
 plot.savefig('Heatmap.png')
