@@ -119,7 +119,9 @@ plt.show()
 plt.scatter(daily_data.Total_Calls_Handled, daily_data.Avg_Handle_Time__seconds_)
 plt.show()
 
-sns.swarmplot(x='Day_of_Week', y='Total_Calls_Handled', data=daily_data)
+sns.set_style("white")
+_ = sns.swarmplot(x='Day_of_Week', y='Total_Calls_Handled', data=daily_data)
+_.set(xlabel="Day of the Week", ylabel="Number of Calls", xticklabels=['Mon','Tue','Wed','Thu','Fri'])
 plt.show()
 
 
