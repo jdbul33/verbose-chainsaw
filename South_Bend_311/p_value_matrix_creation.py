@@ -11,6 +11,8 @@ from scipy import stats
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+#%%
+
 month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
 calls = []
@@ -69,22 +71,51 @@ fri = np.array(new_df.Count[new_df['Day_of_Week'] == 6])
 #%%
 sns.set()
 
-hist_dict = {}
+plt.figure(figsize=(8,8))
+plt.tight_layout()
 
-for data, name in zip([mon, tue, wed, thu, fri], ['Monday','Tuesday','Wednesday','Thursday','Friday']):
-    plt.figure()
-    plt.title("Call Distribution for " + name)
+for i, j, data, name in zip([0,1,2,3,4], [1,1,1,2,2] ,[mon, tue, wed, thu, fri], ['Monday','Tuesday','Wednesday','Thursday','Friday']):
+    plt.subplot(pd.to_numeric(str(3)+str(2)+str(i)))
+    plt.title(name)
     plt.xlabel("Number of Daily Calls")
     plt.ylabel("Number of Days")
     plt.xlim(0, 1200)
     plt.hist(data, bins=24)
+
+#plt.savefig("test.png")
+#%%
+
+
+days=['Monday','Tuesday','Wednesday','Thursday','Friday']
+
+
+df_list=[]
+for i, data, name in zip([0,1,2,3,4],[mon, tue, wed, thu, fri], ['Monday','Tuesday','Wednesday','Thursday','Friday']):
+    d = {'Mean Daily Call Volume':data, 'Day of the Week':name}
+    df = pd.DataFrame(data=d)
+    df_list.append(df)
+
+daily_call_totals = pd.concat([i for i in df_list], ignore_index=True)   
     
 #%%
-import pylab
-import matplotlib._pylab_helpers
 
-figures=[manager.canvas.figure
-         for manager in matplotlib._pylab_helpers.Gcf.get_all_fig_managers()]
-print(figures)
+sns.set(style="white")
+sns.set_palette(sns.cubehelix_palette(5, start=2, rot=0, dark=.3, light=.85, reverse=True))
 
-plt.get_fignums():
+f=sns.boxplot(x='Day of the Week', y='Mean Daily Call Volume',
+            data=daily_call_totals)
+
+sns.despine()
+
+plot2=f.get_figure()
+#plot2.savefig('Daily_Call_Boxplot')
+
+#%%
+
+
+
+
+
+
+
+
