@@ -126,3 +126,23 @@ sns.despine()
 plot3 = _.get_figure()
 #plot3.savefig("Calls_Department.png")
 
+#%%
+
+days=['Monday','Tuesday','Wednesday','Thursday','Friday']
+
+df_days = pd.DataFrame(index=days, columns=days)
+callsbyday = [mon, tue, wed, thu, fri]
+daily_calls = dict(zip(days, callsbyday))
+
+
+for i in range(len(days)):
+    for j in range(len(days)):
+        res = stats.ttest_ind(daily_calls[days[i]], daily_calls[days[j]])
+        df_days.iloc[i,j] = res[1]
+
+p1_df = df_days.apply(pd.to_numeric)
+
+d1 = p1_df.where(np.tril(np.ones(p1_df.shape)).astype(np.bool))
+fig = sns.heatmap(d1, center = .05, cmap='coolwarm')
+plot = fig.get_figure()
+#plot.savefig('Heatmap.png')
