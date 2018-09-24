@@ -12,7 +12,7 @@ from bokeh.layouts import row, column
 from math import pi
 from bokeh.transform import cumsum
 from bokeh.palettes import Category20, brewer, Viridis, Magma, Category10
-from bokeh.models import Jitter, Whisker, ColumnDataSource
+from bokeh.models import Jitter, Whisker, ColumnDataSource, NumeralTickFormatter
 from scipy.stats import sem
 #%%
 """
@@ -52,7 +52,6 @@ p.grid.grid_line_color = None
 """
 Create data visualization on a monthly basis
 This will be the new data
-maybe number, abandon, queue or something
 """
  
 
@@ -132,10 +131,10 @@ fri = np.array(new_df.Count[new_df['Day_of_Week'] == 6])
 
 acc_col = Category10[5]
 
-p2 = figure(x_axis_label = 'Number of Calls per Day', title='Number of Calls by Day of Week 2013 - 2018; Click Legend to Hide/Show', background_fill_color = 'whitesmoke')
+p2 = figure(x_axis_label = 'Number of Calls per Day', y_axis_label = 'Number of Days',title='Number of Calls by Day of Week 2013 - 2018; Click Legend to Hide/Show', background_fill_color = 'whitesmoke')
 
 for data, name, color in zip([mon, tue, wed, thu, fri], ['Mon','Tue','Wed','Thu','Fri'], acc_col):
-    hist, edges = np.histogram(data, density=True, bins=15)
+    hist, edges = np.histogram(data, bins=8)
     p2.quad(top=hist, bottom=0, left=edges[:-1], right=edges[1:], fill_color=color, line_color="#033649", alpha=0.7, legend=name)
 
 #hist, edges = np.histogram(mon, density=True, bins=15)            
@@ -157,6 +156,8 @@ p2.legend.location = "top_left"
 p2.legend.click_policy="hide"
 p2.xaxis.major_label_text_font_size = "11pt"
 p2.yaxis.major_label_text_font_size = "11pt"
+p2.yaxis.formatter = NumeralTickFormatter(format="0,0")
+
 
 #%%
 """
