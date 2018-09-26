@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Aug  2 22:19:19 2018
+Created on Tue Sep 25 23:32:45 2018
 
 @author: jdbul
 """
@@ -12,6 +12,10 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 #%%
+"""
+Calls by month t test matrix
+"""
+
 
 month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
@@ -33,10 +37,11 @@ p_df = p_df.apply(pd.to_numeric)
 
 d = p_df.where(np.tril(np.ones(p_df.shape)).astype(np.bool))
 fig = sns.heatmap(d, center = .05, cmap='coolwarm')
-plot = fig.get_figure()
-#plot.savefig('Heatmap.png')
 
 #%%
+"""
+Monthly Boxplots
+"""
 
 df_list_m=[]
 for i, data, name in zip([0,1,2,3,4, 5, 6, 7, 8, 9, 10 ,11],calls, month):
@@ -46,7 +51,6 @@ for i, data, name in zip([0,1,2,3,4, 5, 6, 7, 8, 9, 10 ,11],calls, month):
 
 monthly_call_totals = pd.concat([i for i in df_list_m], ignore_index=True)   
 
-#%%
 sns.set(style="white")
 sns.set_palette(sns.cubehelix_palette(12, start=2, rot=0, dark=.3, light=.85, reverse=True))
 
@@ -55,12 +59,11 @@ f=sns.boxplot(x='Month', y='Mean Daily Call Volume',
 
 sns.despine()
 
-plot2=f.get_figure()
-#plot2.savefig('Daily_Call_Boxplot')
+
 
 #%%
 """
-reuse code from bokeh to get call distributions
+DAy
 """
 df4 = topics
 df4['Date'] = article_data['Created On']
@@ -91,7 +94,6 @@ fri = np.array(new_df.Count[new_df['Day_of_Week'] == 6])
 
 #%%
 
-
 days=['Monday','Tuesday','Wednesday','Thursday','Friday']
 
 
@@ -102,54 +104,8 @@ for i, data, name in zip([0,1,2,3,4],[mon, tue, wed, thu, fri], ['Monday','Tuesd
     df_list.append(df)
 
 daily_call_totals = pd.concat([i for i in df_list], ignore_index=True)   
-    
-#%%
 
-sns.set(style="white")
-sns.set_palette(sns.cubehelix_palette(5, start=2, rot=0, dark=.3, light=.85, reverse=True))
 
-f=sns.boxplot(x='Day of the Week', y='Mean Daily Call Volume',
-            data=daily_call_totals)
-
-sns.despine()
-
-plot2=f.get_figure()
-#plot2.savefig('Daily_Call_Boxplot')
-
-#%%
-
-df = pd.DataFrame(topics.groupby('KB_Article', as_index=False)['Seconds'].sum())
-#df['Percentage'] = round(df['Seconds']/sum(df['Seconds']) *100, 2)
-df = df.sort_values('Seconds', ascending=False)
-others = pd.Series([df.iloc[5:,1].sum()])
-others = pd.Series(['All Other Departments', others[0]], index=['KB_Article', 'Seconds'])
-df = df.append(others, ignore_index=True)
-df = df.drop(df.index[5:23])
-dept = list(df['KB_Article'])
-
-for i in range(len(dept)):
-    n = dept[i]
-    dept[i] = n.replace(' - KB Team', '')
-    
-df['Department'] = dept
-    
-#df = df.set_index('KB_Article')
-
-df['Total Call Time in Minutes'] = df['Seconds']//60
-#%%
-sns.set(style='whitegrid')
-plt.figure(figsize=(6,4))
-plt.tight_layout()
-_ = sns.barplot(x='Department', y='Total Call Time in Minutes', data=df)
-for item in _.get_xticklabels():
-    item.set_rotation(60)
-sns.despine()
-plot3 = _.get_figure()
-#plot3.savefig("Calls_Department.png")
-
-#%%
-
-days=['Monday','Tuesday','Wednesday','Thursday','Friday']
 
 df_days = pd.DataFrame(index=days, columns=days)
 callsbyday = [mon, tue, wed, thu, fri]
@@ -164,6 +120,15 @@ for i in range(len(days)):
 p1_df = df_days.apply(pd.to_numeric)
 
 d1 = p1_df.where(np.tril(np.ones(p1_df.shape)).astype(np.bool))
-fig = sns.heatmap(d1, center = .05, cmap='coolwarm')
-plot = fig.get_figure()
-#plot.savefig('Heatmap.png')
+#%%
+plt.figure(figsize=(8,8))
+f, (ax1, ax2) = plt.subplots(1,2, sharey=False)
+sns.set(style="white")
+sns.set_palette(sns.cubehelix_palette(5, start=2, rot=0, dark=.3, light=.85, reverse=True))
+
+sns.boxplot(x='Day of the Week', y='Mean Daily Call Volume',
+            data=daily_call_totals, ax=ax1)
+
+sns.heatmap(d1, center = .05, cmap='coolwarm', ax=ax2)
+
+sns.despine()
