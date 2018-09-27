@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 #%%
 """
-Calls by month t test matrix
+Calls by month t test matrix data
 """
 
 
@@ -35,12 +35,12 @@ for i in range(len(month)):
 
 p_df = p_df.apply(pd.to_numeric)
 
-d = p_df.where(np.tril(np.ones(p_df.shape)).astype(np.bool))
-fig = sns.heatmap(d, center = .05, cmap='coolwarm')
+dmonth = p_df.where(np.tril(np.ones(p_df.shape)).astype(np.bool))
+
 
 #%%
 """
-Monthly Boxplots
+Monthly Boxplots Data
 """
 
 df_list_m=[]
@@ -50,14 +50,6 @@ for i, data, name in zip([0,1,2,3,4, 5, 6, 7, 8, 9, 10 ,11],calls, month):
     df_list_m.append(df)
 
 monthly_call_totals = pd.concat([i for i in df_list_m], ignore_index=True)   
-
-sns.set(style="white")
-sns.set_palette(sns.cubehelix_palette(12, start=2, rot=0, dark=.3, light=.85, reverse=True))
-
-f=sns.boxplot(x='Month', y='Mean Daily Call Volume',
-            data=monthly_call_totals)
-
-sns.despine()
 
 
 
@@ -99,8 +91,8 @@ days=['Monday','Tuesday','Wednesday','Thursday','Friday']
 
 df_list=[]
 for i, data, name in zip([0,1,2,3,4],[mon, tue, wed, thu, fri], ['Monday','Tuesday','Wednesday','Thursday','Friday']):
-    d = {'Mean Daily Call Volume':data, 'Day of the Week':name}
-    df = pd.DataFrame(data=d)
+    dq = {'Mean Daily Call Volume':data, 'Day of the Week':name}
+    df = pd.DataFrame(data=dq)
     df_list.append(df)
 
 daily_call_totals = pd.concat([i for i in df_list], ignore_index=True)   
@@ -120,15 +112,38 @@ for i in range(len(days)):
 p1_df = df_days.apply(pd.to_numeric)
 
 d1 = p1_df.where(np.tril(np.ones(p1_df.shape)).astype(np.bool))
+
 #%%
-plt.figure(figsize=(8,8))
-f, (ax1, ax2) = plt.subplots(1,2, sharey=False)
+"""
+making monthly plots
+"""
+
+plt.figure()
+
+
+sns.set(style="white")
+sns.set_palette(sns.cubehelix_palette(12, start=2, rot=0, dark=.3, light=.85, reverse=True))
+
+sns.boxplot(x='Month', y='Mean Daily Call Volume',
+            data=monthly_call_totals)
+sns.despine()
+plt.figure()
+
+sns.heatmap(dmonth, center = .05, cmap='coolwarm')
+
+
+#%%
+"""
+Daily plots
+"""
+plt.figure()
 sns.set(style="white")
 sns.set_palette(sns.cubehelix_palette(5, start=2, rot=0, dark=.3, light=.85, reverse=True))
 
 sns.boxplot(x='Day of the Week', y='Mean Daily Call Volume',
-            data=daily_call_totals, ax=ax1)
-
-sns.heatmap(d1, center = .05, cmap='coolwarm', ax=ax2)
+            data=daily_call_totals)
 
 sns.despine()
+
+plt.figure()
+sns.heatmap(d1, center = .05, cmap='coolwarm')
