@@ -183,7 +183,7 @@ source_error1 = ColumnDataSource(data=dict(base=quick_topics, lower=quick_bot, u
 
 color = Viridis[len(quick_topics)]
 
-p5 = figure(tools=['ypan','yzoom_out','reset'],x_range=quick_topics, y_range=(30,47), y_axis_label='Average Duration in Seconds', plot_height=400, title="Average Call Duration of Top 10 Quickest Topics; Adjusted Y-Axis")
+p5 = figure(tools=['ypan','yzoom_out','reset', 'save'],x_range=quick_topics, y_range=(30,47), y_axis_label='Average Duration in Seconds', plot_height=400, title="Average Call Duration of Top 10 Quickest Topics; Adjusted Y-Axis")
 p5.vbar(x=quick_topics, top=quick_times, width=0.6, fill_color=color, alpha=0.8)
 p5.add_layout(Whisker(source=source_error1, base='base', upper='upper', lower='lower', level='overlay'))
 

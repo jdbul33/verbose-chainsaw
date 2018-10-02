@@ -25,7 +25,7 @@ df = pd.DataFrame(topics.groupby('KB_Article', as_index=False)['Seconds'].sum())
 #df['Percentage'] = round(df['Seconds']/sum(df['Seconds']) *100, 2)
 df = df.sort_values('Seconds', ascending=False)
 others = pd.Series([df.iloc[5:,1].sum()])
-others = pd.Series(['All Other Departments', others[0]], index=['KB_Article', 'Seconds'])
+others = pd.Series(['Total Others', others[0]], index=['KB_Article', 'Seconds'])
 df = df.append(others, ignore_index=True)
 df = df.drop(df.index[5:23])
 dept = list(df['KB_Article'])
@@ -40,10 +40,9 @@ df['Total Call Time in Minutes'] = df['Seconds']//60
 #df = df.set_index('KB_Article')
 #%%
 
-import squarify
 _ = sns.barplot(x='Department', y='Total Call Time in Minutes', data=df)
 for item in _.get_xticklabels():
     item.set_rotation(60)
 sns.despine()
 plot3 = _.get_figure()
-#plot3.savefig("Calls_Department.png")
+plot3.savefig("Calls_Department.png")

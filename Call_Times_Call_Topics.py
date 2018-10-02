@@ -12,7 +12,6 @@ Line, using publicly available data from
 https://data-southbend.opendata.arcgis.com
 
 """
-#%%
 import pandas as pd
 import numpy as np
 import seaborn as sns

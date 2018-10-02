@@ -33,6 +33,7 @@ p_df = p_df.apply(pd.to_numeric)
 
 d = p_df.where(np.tril(np.ones(p_df.shape)).astype(np.bool))
 fig = sns.heatmap(d, center = .05, cmap='coolwarm')
+fig.set_title("P-Values from T-Test on Monthly Call Volume Distributions")
 plot = fig.get_figure()
 #plot.savefig('Heatmap.png')
 
@@ -165,5 +166,6 @@ p1_df = df_days.apply(pd.to_numeric)
 
 d1 = p1_df.where(np.tril(np.ones(p1_df.shape)).astype(np.bool))
 fig = sns.heatmap(d1, center = .05, cmap='coolwarm')
+fig.set_title("P-Values from T-Test on Daily Call Volume Distributions")
 plot = fig.get_figure()
 #plot.savefig('Heatmap.png')
