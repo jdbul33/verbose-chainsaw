@@ -14,7 +14,7 @@ from bokeh.transform import cumsum
 from bokeh.palettes import Category20, brewer, Viridis, Magma, Category10
 from bokeh.models import Jitter, Whisker, ColumnDataSource, NumeralTickFormatter
 from scipy.stats import sem
-from bokeh.models.widgets import Slider
+from bokeh.models.widgets import RangeSlider
 from bokeh.models.callbacks import CustomJS
 
 #%%
@@ -52,7 +52,7 @@ df_6.reset_index(drop=True, inplace=True)
 colors = brewer['Set1'][7]
 p6 = figure(title = 'Average Duration and Number of Calls by Topic in Top Departments \n 9/2016 - 6/2018', x_axis_label = "Average Duration in Seconds", 
             y_axis_label = 'Total Number of Calls by Topic',
-             tools=["hover", 'reset', 'save'], tooltips="@Topic; @Seconds seconds of average duration; @Count total calls")
+             tools=["hover", 'reset', 'save'], tooltips="@Topic; average duration of @Seconds seconds; @Count total calls")
 
 for i, d in enumerate(list(df_6['Dept'].unique())):
     y = df_6[df_6['Dept'] == d][['Count', 'Seconds', 'Topic']]
@@ -92,10 +92,10 @@ callback = CustomJS(args=dict(yr=p6.y_range), code="""
 
 // JavaScript code goes here
 
-var a = 0;
+var a = cb_obj.value[0];
 
 // the model that triggered the callback is cb_obj:
-var b = cb_obj.value;
+var b = cb_obj.value[1];
 
 // models passed as args are automagically available
 yr.start = a;
@@ -103,21 +103,12 @@ yr.end = b;
 
 """)
     
-y_range_slider = Slider(start=0, end=13000, value=13000, step=20, title="Zoom by Number of Total Calls")
+y_range_slider = RangeSlider(start=0, end=13000, value=(0,13000), step=20, title="Zoom by Number of Total Calls",
+                              callback_policy='mouseup')
 
 
 y_range_slider.js_on_change('value', callback) 
 
-#p6.x_range.js_on_change('start', callback)
-   
-
-#def callback(attr, old, new):
-#    low, high = y_range_slider.value
- #   p6.y_range.start = low
-#    p6.y_range.end = high
-
-
-#y_range_slider.on_change('value', callback)
 
 
 
@@ -130,10 +121,10 @@ callback = CustomJS(args=dict(xr=p6.x_range), code="""
 
 // JavaScript code goes here
 
-var a = 0;
+var a = cb_obj.value[0];
 
 // the model that triggered the callback is cb_obj:
-var b = cb_obj.value;
+var b = cb_obj.value[1];
 
 // models passed as args are automagically available
 xr.start = a;
@@ -141,7 +132,8 @@ xr.end = b;
 
 """)
     
-x_slider = Slider(start=0, end=400, value=400, step=10, title="Zoom by Average Call Duration")
+x_slider = RangeSlider(start=0, end=400, value=(0,400), step=10, title="Zoom by Average Call Duration",
+                        callback_policy='mouseup')
 
 
 x_slider.js_on_change('value', callback) 
