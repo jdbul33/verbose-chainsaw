@@ -266,6 +266,8 @@ p6.xaxis.minor_tick_line_color = None
 p6.xaxis.major_label_text_font_size = "11pt"
 p6.yaxis.major_label_text_font_size = "11pt"
 
+
+#%%
 # -*- coding: utf-8 -*-
 """
 Created on Thu Oct 11 11:25:39 2018
@@ -341,6 +343,7 @@ for i, d in enumerate(list(df_6['Dept'].unique())):
         p8.cross(x='Seconds', y='Count', source=y, color=color, size=12, alpha=0.75, legend= d)
    
 
+p8.diamond(x=75, y=4000, size=24, fill_color='red', line_color='blue', alpha=1)
 p8.xaxis.major_label_orientation = pi/3
 p8.xaxis.major_tick_line_color = None
 p8.xaxis.minor_tick_line_color = None
@@ -349,7 +352,6 @@ p8.yaxis.major_label_text_font_size = "11pt"
 
 p8.legend.location = "top_right"
 p8.legend.click_policy="hide"
-
 
 #%%
 """
@@ -371,7 +373,7 @@ yr.end = b;
 
 """)
     
-y_range_slider = RangeSlider(start=0, end=13000, value=(0,13000), step=20, title="Zoom by Number of Total Calls",
+y_range_slider = RangeSlider(start=0, end=4200, value=(0,4200), step=20, title="Zoom by Number of Total Calls",
                               callback_policy='mouseup')
 
 
@@ -407,7 +409,8 @@ x_slider = RangeSlider(start=0, end=400, value=(0,400), step=10, title="Zoom by 
 x_slider.js_on_change('value', callback) 
 
 #p6.x_range.js_on_change('start', callback)
-   
+
+show(row(p8, widgetbox(y_range_slider, x_slider)))
 
 
 

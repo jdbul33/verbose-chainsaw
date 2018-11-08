@@ -24,10 +24,10 @@ plt.show()
 df = pd.DataFrame(topics.groupby('KB_Article', as_index=False)['Seconds'].sum())
 #df['Percentage'] = round(df['Seconds']/sum(df['Seconds']) *100, 2)
 df = df.sort_values('Seconds', ascending=False)
-others = pd.Series([df.iloc[5:,1].sum()])
+others = pd.Series([df.iloc[6:,1].sum()])
 others = pd.Series(['Total Others', others[0]], index=['KB_Article', 'Seconds'])
 df = df.append(others, ignore_index=True)
-df = df.drop(df.index[5:23])
+df = df.drop(df.index[6:23])
 dept = list(df['KB_Article'])
 
 for i in range(len(dept)):
@@ -39,10 +39,12 @@ df['Department'] = dept
 df['Total Call Time in Minutes'] = df['Seconds']//60    
 #df = df.set_index('KB_Article')
 #%%
+sns.set_palette(sns.cubehelix_palette(7, start=2, rot=0, dark=.3, light=.65, reverse=True))
 
 _ = sns.barplot(x='Department', y='Total Call Time in Minutes', data=df)
 for item in _.get_xticklabels():
     item.set_rotation(60)
 sns.despine()
+_.set_title("Total Call Time by Department")
 plot3 = _.get_figure()
-plot3.savefig("Calls_Department.png")
+#plot3.savefig("Calls_Department_sim.png")

@@ -62,7 +62,7 @@ for i, d in enumerate(list(df_6['Dept'].unique())):
     elif d == 'Solid Waste':
         p6.diamond(x='Seconds', y='Count', source=y, color=color, size=12, alpha=0.75, legend= d)
     elif d == 'Streets':
-        p6.asterisk(x='Seconds', y='Count', source=y, color=color, size=12, alpha=0.75, legend= d)
+        p6.triangle(x='Seconds', y='Count', source=y, color=color, size=12, alpha=0.75, legend= d)
     elif d == 'Code Enforcement':
         p6.square(x='Seconds', y='Count', source=y, color=color, size=12, alpha=0.75, legend= d)
     elif d == "Mayor's Office":
